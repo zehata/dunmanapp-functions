@@ -1,0 +1,25 @@
+{
+    "ccaleaders": {
+        "guan?xinyi@dhs?sg": "SC",
+        "lim?lishan@dhs?sg": "SC",
+        "zenon?hans?taneka@dhs?sg": "SC"
+    },
+    "concerts": {
+        "_jo4bgdliu": {
+            "concertattendance": {
+                "_kjgl67uxr": {
+                    "attendantemail": "zenon?hans?taneka@dhs?sg",
+                    "attendantname": "18Y5C31 ZENON HANS TANEKA",
+                    "attendantnumber": 1,
+                    "attendantpaid": "Unpaid"
+                }
+            },
+            "concertcca": "SC",
+            "concertdate": "",
+            "concertdesc": "",
+            "concertmembers": ["zenon?hans?taneka@dhs?sg"],
+            "concertname": "New concert",
+            "concertprice": ""
+        }
+    }
+}

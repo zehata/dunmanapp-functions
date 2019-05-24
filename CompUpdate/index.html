@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		*{
+			margin: 0;
+			padding:0;
+			font-family: Roboto, Segoe UI, Helvetica, Arial;
+		}
+		#title{
+			font-family: Google Sans Display, Helvetica Neue;
+			margin-top: 100px;
+			margin-left: 20px;
+			margin-bottom: 20px;
+			padding-top: 20px;
+			font-size: 2.5em;
+			font-weight: bold;
+			color: black;
+		}
+		#details{
+			position: relative;
+		}
+		.detailsconts{
+			margin: 20px;
+			margin-bottom: 0;
+			padding: 20px;
+			transition: all 0.5s cubic-bezier(.25, .8, .25, 1);
+			opacity: 0;
+			border: 2px solid black;
+			border-radius: 10px;
+		}
+		.bar{
+			width: 40px;
+			background-color: black;
+			height: 1px;
+			margin-top: 10px;
+			margin-bottom: 10px;
+		}
+	</style>
+</head>
+<body>
+	<div id="title">Competition Updates</div>
+	<div id="details">
+	</div>
+	<script>
+		var sections = [];
+		sections = getappdata().all;
+		function onDataChanged(data){
+			sections = data.all;
+			sectionadaptor();
+		}
+		sectionadaptor();
+
+		function sectionadaptor(){
+			document.getElementById('details').innerHTML = ""; 
+			for(var i = 0; i < sections.length; i++){
+				var newsection = document.createElement('div');
+				newsection.id = "details"+i;
+				newsection.className = "detailsconts";
+				for(var j = 0; j < sections[i].length;j++){
+					newsection.innerHTML += "<div class='desccontent'>"+sections[i][j]+"</div>";
+					if (j != sections[i].length-1){
+						newsection.innerHTML += "<div class='bar'></div>";
+					}
+				}
+				document.getElementById('details').appendChild(newsection);
+			}
+			animate();
+		}
+
+		function animate(){
+			var fadecounter = 0;
+			var fadeinterval = setInterval(function(){
+				if(fadecounter>=sections.length-1){
+					clearInterval(fadeinterval);
+				}
+				document.getElementById('details'+fadecounter).style.opacity = 1;
+				fadecounter++;
+			},100)
+		}
+
+	</script>
+</body>
+</html>

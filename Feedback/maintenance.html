@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		*{
+			padding: 0;
+			margin:0;
+			font-family: Roboto, Segoe UI, Helvetica, Arial;
+		}
+		.feedbacks{
+			padding: 20px;
+			border-bottom: 1px solid black;
+		}
+		.bar{
+			width: 40px;
+			background-color: black;
+			height: 1px;
+			margin-top: 10px;
+			margin-bottom: 10px;
+		}
+		.submitreply{
+			border-radius: 5px;
+			width: fit-content;
+			padding: 10px;
+			background-color: rgb(0,32,96);
+			color: white;
+		}
+	</style>
+</head>
+<body>
+	<div id="cont">
+	</div>
+	<script>
+		var data = getappdata();
+		if(!data){
+			data = {"feedbacks":["placeholder"],"replies":{"placeholder":"preventsfeedbacksfrombringempty"}};
+			savedata(data);
+		}
+		function onDataChanged(newdata){
+			data = newdata;
+			parseinfo();
+		}
+		parseinfo();
+
+		function parseinfo(){
+			var prodata = Object.entries(data);
+			document.getElementById('cont').innerHTML = "";
+			for(var i = 0; i < data.feedbacks.length; i++){
+				if(typeof data.feedbacks[i] != "string"){
+					var feedback = data.feedbacks[i];
+					var newfeedback = document.createElement('div');
+					newfeedback.id = "feedback"+i;
+					newfeedback.className = "feedbacks";
+					newfeedback.innerHTML = `
+						<div class="feedbackmessages">`+feedback.feedback+`</div>
+						<div>
+							<div class="feedbacknames">`+feedback.user+`</div>
+							<div class="feedbacktimestamp">Feedbacked on `+new Date(feedback.timestamp).toLocaleTimeString()+', '+new Date(feedback.timestamp).toLocaleDateString()+`</div>
+						</div>
+						<div class="bar"></div>
+						Replies
+						<div id='repliescont`+i+`'>
+						</div>
+						<div class="bar"></div>
+						<div>
+							<div>Reply:</div>
+							<textarea id="textarea`+i+`" cols="30" rows="10"></textarea>
+							<div onclick='submitreply("`+feedback.user+`",`+i+`,`+feedback.timestamp+`);' class='submitreply'>Submit reply</div>
+						</div>
+					`;
+					document.getElementById('cont').appendChild(newfeedback);
+					if(data.replies[feedback.user]){
+						if(data.replies[feedback.user].length == 0){
+							var noreplymessage = document.createElement('div');
+							noreplymessage.innerHTML = "<div class='bar'></div>No replies yet";
+							document.getElementById('repliescont'+i).appendChild(noreplymessage);
+						}
+						for(var j = 0; j < data.replies[feedback.user].length;j++){
+							if(data.replies[feedback.user][j].re == feedback.timestamp && data.replies[feedback.user][j].replier == getStudentName()){
+								var newreply = document.createElement('div');
+								newreply.className = "repliescont";
+								newreply.innerHTML = `
+									<div class='bar'></div>
+									<div style='display:flex;'>
+										<div>
+											<div>`+data.replies[feedback.user][j].message+`</div>
+											<div>`+data.replies[feedback.user][j].replier+`</div>
+											<div>Replied on `+new Date(data.replies[feedback.user][j].timestamp).toLocaleTimeString()+', '+new Date(data.replies[feedback.user][j].timestamp).toLocaleDateString()+`</div>
+										</div>
+										<div onclick="deletereply('`+feedback.user+`',`+data.replies[feedback.user][j].timestamp+`);" style='margin-left:20px;'>X</div>
+									</div>
+								`;
+								document.getElementById('repliescont'+i).appendChild(newreply);
+							} else if (data.replies[feedback.user][j].re == feedback.timestamp){var newreply = document.createElement('div');
+								newreply.className = "repliescont";
+								newreply.innerHTML = `
+									<div class='bar'></div>
+									<div style='display:flex;'>
+										<div>
+											<div>`+data.replies[feedback.user][j].message+`</div>
+											<div>`+data.replies[feedback.user][j].replier+`</div>
+											<div>Replied on `+new Date(data.replies[feedback.user][j].timestamp).toLocaleTimeString()+', '+new Date(data.replies[feedback.user][j].timestamp).toLocaleDateString()+`</div>
+										</div>
+									</div>
+								`;
+								document.getElementById('repliescont'+i).appendChild(newreply);
+							}
+						}
+					} else {
+						var noreplymessage = document.createElement('div');
+						noreplymessage.innerHTML = "<div class='bar'></div>No replies yet";
+						document.getElementById('repliescont'+i).appendChild(noreplymessage);
+					}
+				}
+			}
+		}
+
+		function submitreply(name,i,timeid){
+			if(data.replies[name]){
+				data.replies[name].push({"replier":getStudentName(),"timestamp":Date.now(),"message":document.getElementById('textarea'+i).value,"re":timeid});
+				parseinfo();
+			} else {
+				data.replies[name]= [{"replier":getStudentName(),"timestamp":Date.now(),"message":document.getElementById('textarea'+i).value,"re":timeid}];
+				parseinfo();
+			}
+			savedata(data);
+		}
+
+		function deletereply(name,timestamp){
+			for(var i = 0; i < data.replies[name].length;i++){
+				if(data.replies[name][i].timestamp == timestamp){
+					data.replies[name].splice(i,1);
+				}
+			}
+			parseinfo();
+			savedata(data);
+		}
+	</script>
+</body>
+</html>

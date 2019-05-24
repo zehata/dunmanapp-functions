@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		*{
+			margin: 0;
+			padding:0;
+			font-family: Roboto, Segoe UI, Helvetica, Arial;
+		}
+		#title{
+			font-family: Google Sans Display;
+			margin-top: 100px;
+			margin-left: 20px;
+			margin-bottom: 20px;
+			padding-top: 20px;
+			font-size: 2.5em;
+			font-weight: bold;
+			color: black;
+		}
+		#cat{
+			margin-left: 20px;
+			display: flex;
+		}
+		#cattitle{
+			padding-top: 10px;
+			padding-right: 10px;
+		}
+		#catselect{
+			background-color: #ddd;
+			padding: 10px;
+			border-radius: 5px;
+			border:none;
+		}
+		#catselect:focus{
+			outline: none;
+		}
+		#input{
+			margin: 20px;
+			border: 2px solid #ddd;
+			border-radius: 5px;
+			width: calc(100% - 64px);
+			padding: 10px;
+		}
+		#input:focus{
+			border: 2px solid rgb(0,32,96);
+			outline: none;
+		}
+		#send{
+			margin-left: 20px;
+			border-radius: 5px;
+			width: fit-content;
+			padding: 10px;
+			background-color: rgb(0,32,96);
+			color: white;
+		}
+		#repliestitle{
+			font-family: Google Sans Display;
+			margin-left: 20px;
+			margin-bottom: 20px;
+			padding-top: 20px;
+			font-size: 2.5em;
+			font-weight: bold;
+			color: black;
+		}
+		#repliescont{
+			text-align: center;
+		}
+		.replies{
+			padding: 20px;
+			text-align: left;
+			font-size: 1.2em;
+			border-bottom: 1px solid #ddd;
+		}
+		.message{
+			margin-bottom: 10px;
+		}
+		.time, .name{
+			font-size: 0.8em;
+		}
+		.bar{
+			width: 40px;
+			background-color: black;
+			height: 1px;
+			margin-top: 10px;
+			margin-bottom: 10px;
+		}
+		#darken{
+			display: none;
+			opacity: 0;
+			background-color: rgba(0,0,0,0.5);
+			z-index: 0;
+			position: fixed;
+			width: 100%;
+			height: 100%;
+			top: 0;
+			left: 0;
+			transition: all 0.5s cubic-bezier(.25, .8, .25, 1);
+		}
+		#dialog{
+			position: fixed;
+			left: 0;
+			bottom: -50vh;
+			width: 100vw;
+			height: fit-content;
+			background-color: #FFF;
+			z-index: 11;
+			border-top-left-radius: 10px;
+			border-top-right-radius: 10px;
+			transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+		}
+		#confirmtxt{
+			margin: 30px;
+			font-size: 1.5em;
+			font-family: Google Sans Display;
+		}
+		#btns{
+			margin: 30px;
+			font-size: 1.5em;
+			font-family: Google Sans Display;
+			display: flex;
+			margin-bottom: 10vh;
+		}
+		#cancelsave{
+			margin:10px;
+			padding: 15px;
+			background-color: #ddd;
+			border-radius: 5px;
+		}
+		#confirmsave{
+			margin:10px;
+			margin-left: 20px;
+			padding: 15px;
+			background-color: #ddd;
+			border-radius: 5px;
+		}
+	</style>
+</head>
+<body>
+	<div id="title">Feedback</div>
+	<div id="cat">
+		<div id="cattitle">Category </div>
+		<select id="catselect">
+			<option value="App">App</option>
+			<option value="SC">SC</option>
+			<option value="School">School</option>
+			<option value="CCAs">CCAs</option>
+			<option value="Others">Others</option>
+		</select>
+	</div>
+	<textarea rows="10" type="text" placeholder="Type your feedback..." id="input"></textarea>
+	<div id="send" onclick="wanttosave();">Send</div>
+	<div id="replies">
+		<div id="repliestitle">Replies</div>
+		<div id="repliescont">No replies yet</div>
+	</div>
+	<div id="darken" onclick="cancelsave();"></div>
+	<div id="dialog"><div id="confirmtxt">Submit feedback? You won't be able to edit or delete this</div><div id="btns"><div style='width: 100%;'></div><div id="cancelsave" onclick="cancelsave();">Cancel</div><div id="confirmsave" onclick="save();">Confirm</div></div></div>
+	<script>
+		function wanttosave(){
+            document.body.style.overflow = "hidden";
+			document.getElementById('darken').style.display = 'block';
+			setTimeout(function(){document.getElementById('darken').style.opacity = 1;},1);
+			document.getElementById('dialog').style.bottom = 0;
+		}
+
+		function cancelsave(){
+            document.body.style.overflow = "overlay";
+            document.getElementById('darken').style.opacity = 0;
+			setTimeout(function(){document.getElementById('darken').style.display = 'none';},500);
+			document.getElementById('dialog').style.bottom = "-50vh";
+		}
+
+		var alldata;
+		alldata = getappdata();
+		var user;
+		var userdata;
+		user = getStudentName();
+
+		if(alldata.replies[user]){
+			userdata = alldata[user];
+		} else {
+			alldata.replies[user] = {"feedbacks":[],"replies":[]};
+			userdata = alldata.replies[user];
+		}
+		showreplies();
+
+		function onDataChanged(data){
+			alldata = data;
+			showreplies();
+		}
+
+		function save(){
+            document.body.style.overflow = "overlay";
+            document.getElementById('darken').style.opacity = 0;
+			setTimeout(function(){document.getElementById('darken').style.display = 'none';},500);
+			document.getElementById('dialog').style.bottom = "-50vh";
+			pushdata('/feedbacks',{"user":user,"feedback":document.getElementById('input').value,"timestamp":Date.now()});
+			// alldata.feedbacks.push({"user":user,"feedback":document.getElementById('input').value,"timestamp":Date.now()});
+			// savedata(alldata);
+		}
+
+		function showreplies(){
+			if(alldata.replies[user]){
+				var repliestouser = alldata.replies[user];
+				document.getElementById('repliescont').innerHTML = "";
+				for(var i = 0; i < repliestouser.length; i++){
+					var newreply = document.createElement('div');
+					newreply.className = "replies";
+					newreply.innerHTML = "<div class='message'>"+repliestouser[i].message+"</div><div class='bar'></div><div class='name'>"+repliestouser[i].replier+"</div><div class='time'> replied on "+new Date(repliestouser[i].timestamp).toLocaleTimeString()+', '+new Date(repliestouser[i].timestamp).toLocaleDateString()+"</div>";
+					document.getElementById('repliescont').appendChild(newreply);
+				}
+			}
+		}
+	</script>
+</body>
+</html>

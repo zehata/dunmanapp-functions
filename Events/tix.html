@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		*{
+			margin: 0;
+			padding:0;
+			font-family: Roboto, Segoe UI, Helvetica, Arial;
+		}
+		body{
+			transition: all 0.5s cubic-bezier(.25, .8, .25, 1);
+		}
+		#titlewrapper{
+			position: relative;
+			background-color: rgb(0,32,96);
+			width: calc(100vw - 40px);
+			height: fit-content;
+			color:white;
+			display: flex;
+			flex-direction: column;
+			padding:20px;
+		}
+		.titleorg{
+			margin-bottom: 12px;
+		}
+		#fixedconcerttitle{
+			font-size: 2em;
+			font-family: Google Sans Display;
+			margin-left: 20px;
+		}
+		#desctitle{
+			font-size: 0.8em;
+		}
+		#buytix{
+			width: 100px;
+			text-align: center;
+			border: 2px solid white;
+			border-radius:15px;
+			padding: 10px;
+			height: fit-content;
+		}
+		#buytix:active{
+			background-color: white;
+			color: blue;
+		}
+		#fixedbuytix{
+			width: 100px;
+			text-align: center;
+			border: 2px solid white;
+			border-radius:15px;
+			padding: 10px;
+			height: fit-content;
+		}
+		#fixedbuytix:active{
+			background-color: white;
+			color: blue;
+		}
+		#background{
+			width: 100vw;
+			/*height: auto;*/
+			height: 56.25vw;
+			transition: all 0.5s cubic-bezier(.25, .8, .25, 1);
+			top:0;
+		}
+		#details{
+			position: absolute;
+			top: calc(2em + 40px);
+		}
+		#buytixwrapper{
+			display: flex;
+			width: 100%;
+			margin-bottom: 0;
+		}
+		.flexgrow1{
+			flex-grow: 1;
+		}
+		#desccontent{
+			padding-bottom: 20px;
+			border-bottom: 1px solid grey;
+		}
+		.detailsconts{
+			margin-top: 20px;
+			padding-left:20px;
+			padding-right: 20px;
+			transition: all 0.5s cubic-bezier(.25, .8, .25, 1);
+			opacity: 0;
+		}
+		.bar{
+			width: 40px;
+			background-color: black;
+			height: 1px;
+			margin-top: 10px;
+			margin-bottom: 10px;
+		}
+		.desctitle{
+			font-size: 1.2em;
+			font-family: Google Sans Display;
+		}
+		#fixedtitlewrapper{
+			background-color: rgb(0,32,96);
+			position: fixed;
+			width: 120vw;
+			color: white;
+			padding: 20px;
+			z-index: 2;
+			display: inline-flex;
+			transition: all 0.5s cubic-bezier(.25, .8, .25, 1);
+			top: 0;
+		}
+		#titlebuywrapper{
+			display: flex;
+		}
+		#background{
+			box-shadow: inset 0px -40px 100px -10px #0005;
+			z-index: 1;
+		}
+		#backbtn{
+			width:40px;
+			height: 40px;
+			top: 0;
+			left: 0;
+		}
+	</style>
+</head>
+<body>
+	
+	<div id="fixedtitlewrapper">
+		<img id="backbtn" onclick="document.getElementById('fixedtitlewrapper').style.top = initialy-8+'px'; document.getElementById('fixedtitlewrapper').style.backgroundColor = 'white'; document.getElementById('fixedtitlewrapper').style.fontSize = '0.78em'; document.getElementById('fixedtitlewrapper').style.left = '-60px'; document.getElementById('fixedtitlewrapper').style.color = 'black'; document.getElementById('details').style.opacity = 0; document.getElementById('backbtn').style.opacity = 0; localStorage.setItem('events-return','1'); setTimeout(function(){window.history.back();		},500);" src="backwhite.png"/>
+		<div class="titlecontents flexgrow1" style="margin-bottom: 0;" id="fixedconcerttitle">Concert Title</div>
+	</div>
+	<div id="details">
+	</div>
+	<script>
+		var initialy = Number(localStorage.getItem('events-initialy'));
+		var nowviewing = JSON.parse(localStorage.getItem('events-nowviewing'));
+		var sections = nowviewing.sections;
+		document.getElementById('fixedconcerttitle').innerHTML = nowviewing.eventname;
+		sectionadaptor();
+
+		function sectionadaptor(){
+			var newsection = document.createElement('div');
+			newsection.className = "detailsconts";
+			newsection.style.opacity = "1";
+			newsection.innerHTML = "<div class='desccontent desctitle'>Descriptions</div><div class='bar'></div><div class='desccontent'>"+nowviewing.desc+"</div>";
+			document.getElementById('details').appendChild(newsection);
+			if(sections){
+				for(var i = 0; i < sections.length; i++){
+					var newsection = document.createElement('div');
+					newsection.id = "details"+i;
+					newsection.className = "detailsconts";
+					newsection.innerHTML = "<div class='desccontent desctitle'>"+sections[i][0]+"</div><div class='bar'></div><div class='desccontent'>"+sections[i][1]+"</div>";
+					document.getElementById('details').appendChild(newsection);
+				}
+			var fadecounter = 0;
+			var fadeinterval = setInterval(function(){
+				if(fadecounter==sections.length-1){
+					clearInterval(fadeinterval);
+				}
+				document.getElementById('details'+fadecounter).style.opacity = 1;
+				fadecounter++;
+			},100)
+			}
+		}
+
+
+		function scroll(){
+			if(document.getElementById('titlewrapper').getBoundingClientRect().y < 0){
+				document.getElementById('fixedtitlewrapper').style.display = "flex";
+			} else {
+				document.getElementById('fixedtitlewrapper').style.display = "none";
+			}
+		}
+
+		var raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame || window.oRequestAnimationFrame;
+
+        var lastscrollTop = document.body.getBoundingClientRect().top;
+
+        if (raf) {
+            loop();
+        }
+
+        function loop() {
+            var scrollTop = document.body.getBoundingClientRect().top;
+            if (lastscrollTop === scrollTop) {
+                raf(loop);
+                return;
+            } else {
+                lastscrollTop = scrollTop;
+                scroll();
+                raf(loop);
+            }
+        }
+	</script>
+</body>
+</html>

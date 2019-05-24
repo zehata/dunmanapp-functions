@@ -1,0 +1,86 @@
+var teachers = [
+
+[1,["Mdm","An","Fengyun","Feng","Yun"],"Mdm An Fengyun",["Chinese (Senior High)"]],
+
+]
+
+- if the formatting is screwed up -> make your font size smaller or turn off word wrap (format > word wrap)
+
+- remember the commas and inverted commas
+- Here is an explanation of the template
+- [                      1,          ["Mdm","An","Fengyun","Feng","Yun"],     "Mdm An Fengyun",               ["Chinese (Senior High)"]],
+- ^                      ^              ^                                       ^                                ^
+- remember this bracket  Locker      Search tags go here, including           This is the full name           The subject they teach -
+-                        Number      any easily misspelled names they         Don't need inverted commas      Refer to the template below
+-                                    might accidentally type                  on every word. Just at          Must be exact copy
+-                                    (Note that each word needs               the start and the end           Even the spaces
+-                                    inverted commas and are separated
+-                                    by commas)
+-
+- Ignore the spaces
+- They are just for readability and formatting
+-
+- All possible subjects:
+-
+- Lower Sec Sciences
+- Computing (Lower Sec)
+- Physics (Upper Sec)
+- Chemistry (Upper Sec)
+- Biology (Upper Sec)
+- Physics (Senior High)
+- Chemistry (Senior High)
+- Biology (Senior High)
+- Computing (Senior High)
+- Lower Sec Maths
+- Upper Sec Maths (Maths 1 & 2)
+- Financial Literacy
+- Upper Sec Maths (\'O\' Level)
+                   ^  ^That is not a typo
+- Senior High Maths and Further Maths
+- Geography (Lower Sec)
+- History (Lower Sec)
+- Thinking and Research Programme (Upper Sec)
+- Geography (Upper Sec)
+- History (Upper Sec)
+- Thinking and Research Programme (Upper Sec)
+- Social Studies (\'O\' Level)
+                  ^  ^Also not typo
+- Economics
+- Geography (Senior High)
+- History (Senior High)
+- Language Arts (Lower Sec)
+- Higher Chinese (Lower Sec)
+- Language Arts (Upper Sec)
+- Literature in English (Upper Sec)
+- English Language
+- Higher Chinese (Upper Sec)
+- Chinese (Upper Sec)
+- Literature in Chinese
+- General Paper
+- Chinese (Senior High)
+- English Language and Linguistics
+- General Music Programme
+- Music Elective Programme
+- Higher Music
+- Music (Senior High)
+- General Art Programme
+- Art (Special Programme)
+- Art (Senior High)
+- PE
+- Appreciation of Chinese Culture
+- Life Skills Programme
+- Character and Citizenship Education
+- Active Citizenry Education
+
+- The list of teachers are in the SW team drive. Check the email for the link. Hopefully I had remembered to do so
+- Let me know if you think there's a typo, I will try to get back to you immediately
+- Also let me know if you meet any problem or have any question
+- If there are teachers you don't know what their subject is, just leave it blank and leave it to team 3, they will deal with it later
+- Good Luck!
+
+
+
+
+
+
+

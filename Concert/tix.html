@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		*{
+			margin: 0;
+			padding:0;
+			font-family: Roboto, Segoe UI, Helvetica, Arial;
+			user-select: none;
+		}
+		body{
+			transition: all 0.5s cubic-bezier(.25, .8, .25, 1);
+		}
+		#titlewrapper{
+			position: relative;
+			background-color: rgb(0,32,96);
+			width: calc(100vw - 40px);
+			height: fit-content;
+			color:white;
+			display: flex;
+			flex-direction: column;
+			padding:20px;
+		}
+		.titleorg{
+			margin-bottom: 12px;
+		}
+		#concerttitle{
+			font-size: 2em;
+			font-family: Google Sans Display;
+		}
+		#desctitle{
+			font-size: 0.8em;
+		}
+		#buytix{
+			width: 100px;
+			text-align: center;
+			border: 2px solid white;
+			border-radius:15px;
+			padding: 10px;
+			height: fit-content;
+		}
+		#buytix:active{
+			background-color: white;
+			color: rgb(0,32,96);
+		}
+		#bookedbuytix{
+			width: 100px;
+			text-align: center;
+			border: 2px solid white;
+			border-radius:15px;
+			padding: 10px;
+			height: fit-content;
+			background-color: white;
+			color:rgb(0,32,96);
+		}
+		#bookedbuytix:active{
+			background-color: rgb(0,32,96);
+			color: white;
+		}
+		#fixedbuytix{
+			width: 100px;
+			text-align: center;
+			border: 2px solid white;
+			border-radius:15px;
+			padding: 10px;
+			height: fit-content;
+		}
+		#fixedbuytix:active{
+			background-color: white;
+			color: rgb(0,32,96);
+		}
+		#bookedfixedbuytix{
+			width: 100px;
+			text-align: center;
+			border: 2px solid white;
+			border-radius:15px;
+			padding: 10px;
+			height: fit-content;
+			background-color: white;
+			color:rgb(0,32,96);
+		}
+		#bookedfixedbuytix:active{
+			background-color: rgb(0,32,96);
+			color: white;
+		}
+		#background{
+			width: 100vw;
+			/*height: auto;*/
+			height: 56.25vw;
+			transition: all 0.5s cubic-bezier(.25, .8, .25, 1);
+			top:0;
+		}
+		#details{
+			position: relative;
+		}
+		#buytixwrapper{
+			display: flex;
+			width: 100%;
+			margin-bottom: 0;
+		}
+		.flexgrow1{
+			flex-grow: 1;
+		}
+		#desccontent{
+			padding-bottom: 20px;
+			border-bottom: 1px solid grey;
+		}
+		.detailsconts{
+			margin-top: 20px;
+			padding-left:20px;
+			padding-right: 20px;
+			transition: all 0.5s cubic-bezier(.25, .8, .25, 1);
+			opacity: 0;
+		}
+		#bar{
+			width: 40px;
+			background-color: black;
+			height: 1px;
+			margin-top: 10px;
+			margin-bottom: 10px;
+		}
+		.desctitle{
+			font-size: 1.2em;
+			font-family: Google Sans Display;
+		}
+		#fixedtitlewrapper{
+			background-color: rgb(0,32,96);
+			position: fixed;
+			width: calc(100vw - 40px);
+			color: white;
+			padding: 20px;
+			z-index: 2;
+			display: none;
+		}
+		#titlebuywrapper{
+			display: flex;
+		}
+		#background{
+			box-shadow: inset 0px -40px 100px -10px #0005;
+			z-index: 1;
+		}
+		#backbtn{
+			width: 40px;
+			height: 40px;
+			position: fixed;
+			top: 0;
+			left: 0;
+			padding: 15px;
+		}
+		#bookingscreen{
+			width: 100vw;
+			height: 90vh;
+			padding-bottom: 10vh; 
+			position: fixed;
+			top:0;
+			left: 0;
+			background-color: white;
+			z-index: 6;
+			box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+			display: flex;
+			flex-direction: column;
+			display: none;
+			opacity: 0;
+			transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+		}
+		#bookingbtn{
+			width: fit-content;
+			border-radius: 5px;
+			background-color: rgb(0,32,96);
+			margin: auto;
+			color: white;
+			padding: 10px;
+		}
+		#bookingbtncont{
+			width: calc(100% - 40px);
+			margin: 20px;
+		}
+		#confirmationinfo{
+			padding: 20px;
+			font-size: 1.2em;
+		}
+		#confirmation{
+			flex-grow: 1;
+			padding: 20px;
+		}
+		#attendantnumberinput{
+			border: 2px solid grey;
+			border-radius: 5px;
+			padding: 5px;
+			user-select: auto;
+		}
+		#attendantnumberinput:focus{
+			outline: none;
+			border: 2px solid rgb(0,32,96);
+			user-select: auto;
+		}
+		#confirmationinfoname{
+			margin-bottom: 20px;
+		}
+		#divider{
+			display: flex;
+			width: 100%;
+			position: relative;
+			height: fit-content;
+		}
+		.bar{
+			border-bottom: 2px black solid;
+			flex-grow: 1;
+			height: 50%;
+			margin-left: 10px;
+			margin-right: 10px;
+		}
+		#cancelbookinginfo{
+			padding: 20px;
+			font-size: 1.2em;
+		}
+		#cancelbookingwarning{
+			flex-grow: 1;
+			padding: 20px;
+		}
+		#cancelbtn{
+			width: fit-content;
+			border-radius: 5px;
+			background-color: red;
+			margin: auto;
+			color: white;
+			padding: 10px;
+		}
+		#cancelbtncont{
+			width: calc(100% - 40px);
+			margin: 20px;
+		}
+	</style>
+</head>
+<body>
+	<div id="bookingscreen">
+		<div id="confirmationinfo">
+			You are booking tickets for:
+		</div>
+		<div id="confirmation"></div>
+		<div id="bookingbtncont">
+			<div id="bookingbtn">Confirm booking</div>
+		</div>
+	</div>
+	<img id="backbtn" onclick="document.getElementById('background').style.position='fixed';document.getElementById('fixedtitlewrapper').style.opacity = 0; document.getElementById('titlewrapper').style.opacity = 0; document.getElementById('details').style.opacity = 0; document.body.style.background = 'rgb(0,32,96)'; document.getElementById('background').style.top= initialy+'px'; document.getElementById('background').style.height= '300px'; document.getElementById('backbtn').style.opacity = 0; localStorage.setItem('concerts-return','1'); setTimeout(function(){window.history.back();},500);" src="backwhite.png"/>
+	<div id="fixedtitlewrapper">
+		<div class="titlecontents flexgrow1" style="margin-bottom: 0;" id="fixedconcerttitle">Concert Title</div><div id="fixedbuytix" onclick="">$10</div>
+	</div>
+	<div id="background"></div>
+	<div id="titlewrapper">
+		<div id="titlebuywrapper"><div class="titlecontents flexgrow1" id="concerttitle">Concert Title</div><div id="buytix" onclick="openbookingscreen();">$10</div></div>
+		<div class="titleorg" id="org">Organiser</div>
+		<div class="titledate" id="date">2018-04-24</div>
+	</div>
+	<div id="details">
+	</div>
+	<script>
+		var initialy = Number(localStorage.getItem('concerts-initialy'));
+		var nowviewingid = JSON.parse(localStorage.getItem('concerts-nowviewingid'));
+		var nowviewing = JSON.parse(localStorage.getItem('concerts-nowviewing'));
+		var sections = nowviewing.sections;
+		document.getElementById('fixedconcerttitle').innerHTML = nowviewing.concertname;
+		document.getElementById('concerttitle').innerHTML = nowviewing.concertname;
+		document.getElementById('org').innerHTML = nowviewing.concertcca;
+		document.getElementById('date').innerHTML = nowviewing.concertdate;
+
+		document.getElementById('background').style.background = nowviewing.background;
+		var concert = getappdata()["concerts"][nowviewingid];
+		function onDataChanged(newdata){
+			concert = newdata["concerts"][nowviewingid];
+		}
+		sectionadaptor();
+
+		// function getappdata(){
+		// 	var alldata = {
+		// 	    "ccaleaders": {
+		// 	        "guan?xinyi@dhs?sg": "SC",
+		// 	        "lim?lishan@dhs?sg": "SC",
+		// 	        "zenon?hans?taneka@dhs?sg": "SC"
+		// 	    },
+		// 	    "concerts": {
+		// 	        "_jo4bgdliu": {
+		// 	            "concertattendance": {
+		// 	                "_kjgl67uxr": {
+		// 	                    "attendantemail": "zenon?hans?taneka@dhs?sg",
+		// 	                    "attendantname": "18Y5C31 ZENON HANS TANEKA",
+		// 	                    "attendantnumber": 2,
+		// 	                    "attendantpaid": 10,
+		// 	                    "attendantstatus":"Active"
+		// 	                }
+		// 	            },
+		// 	            "concertcca": "SC",
+		// 	            "concertdate": "",
+		// 	            "concertdesc": "",
+		// 	            "concertmembers": ["zenon?hans?taneka@dhs?sg"],
+		// 	            "concertname": "New concert",
+		// 	            "concertprice": ""
+		// 	        }
+		// 	    }
+		// 	};
+		// 	return alldata;
+		// }
+
+		function generateID(){
+			return '_' + Math.random().toString(36).substr(2, 9);
+		}
+
+		function cancelbooking(){
+			var bookedconcerts = {};
+			if(localStorage.getItem("concerts-selfbookingcode")){
+				bookedconcerts = JSON.parse(localStorage.getItem("concerts-selfbookingcode"));
+			}
+			transactdata('/concerts/'+nowviewingid+'/concertattendance/'+bookedconcerts[nowviewingid],{
+				"attendantname":getStudentName(),
+				"attendantnumber":0,
+				"attendantpaid":concert["concertattendance"][bookedconcerts[nowviewingid]]["attendantpaid"],
+				"attendantstatus": "Cancelled",
+				"attendantemail":getStudentEmail().replace(new RegExp("\\.","g"),"?")
+			});
+			closebookingscreen();
+		}
+
+		function bookconcert(){
+			var bookedconcerts = {};
+			if(localStorage.getItem("concerts-selfbookingcode")){
+				bookedconcerts = JSON.parse(localStorage.getItem("concerts-selfbookingcode"));
+			}
+			var code = "";
+			if(bookedconcerts.hasOwnProperty(nowviewingid)){
+				code = bookedconcerts[nowviewingid];
+			} else {
+				code = generateID();
+			}
+			var lastpaid = 0;
+			if(concert.hasOwnProperty("concertattendance")){
+				if(concert["concertattendance"].hasOwnProperty(code)){
+					lastpaid = concert["concertattendance"][code]["attendantpaid"];
+				}
+			}
+			transactdata('/concerts/'+nowviewingid+'/concertattendance/'+code,{
+				"attendantname":getStudentName(),
+				"attendantnumber":document.getElementById('attendantnumberinput').value,
+				"attendantpaid":0,
+				"attendantstatus":"Active",
+				"attendantemail":getStudentEmail().replace(new RegExp("\\.","g"),"?")
+			});
+			bookedconcerts[nowviewingid] = code;
+			localStorage.setItem("concerts-selfbookingcode",JSON.stringify(bookedconcerts));
+			var concertnamemap = {};
+			if(localStorage.getItem("concerts-concertnamemap")){
+				concertnamemap = JSON.parse(localStorage.getItem("concerts-concertnamemap"));
+			}
+			concertnamemap[nowviewingid] = concert.concertname;
+			localStorage.setItem("concerts-concertnamemap",JSON.stringify(concertnamemap));
+			closebookingscreen();
+		}
+
+		function changebooking(){
+			var bookedconcerts = {};
+			if(localStorage.getItem("concerts-selfbookingcode")){
+				bookedconcerts = JSON.parse(localStorage.getItem("concerts-selfbookingcode"));
+			}
+			var code = "";
+			code = bookedconcerts[nowviewingid];
+			transactdata('/concerts/'+nowviewingid+'/concertattendance/'+code,{
+				"attendantname":getStudentName(),
+				"attendantnumber":document.getElementById('attendantnumberinput').value,
+				"attendantpaid":concert["concertattendance"][code]["attendantpaid"],
+				"attendantstatus":"Active",
+				"attendantemail":getStudentEmail().replace(new RegExp("\\.","g"),"?")
+			});
+			closebookingscreen();
+		}
+
+		function openbookingscreen(){
+			document.getElementById("bookingscreen").innerHTML = "";
+			var bookedconcerts = {};
+			if(localStorage.getItem("concerts-selfbookingcode")){
+				bookedconcerts = JSON.parse(localStorage.getItem("concerts-selfbookingcode"));
+			}
+			var code = "";
+			code = bookedconcerts[nowviewingid];
+			if(concert.hasOwnProperty("concertattendance")){
+				if(concert["concertattendance"].hasOwnProperty(code)){
+					openmodifybookingscreen(concert["concertattendance"][code]["attendantnumber"]);
+				} else {
+						opennewbookingscreen();
+				}
+			} else {
+				opennewbookingscreen();
+			}		
+		}
+
+		function closebookingscreen(){
+			document.getElementById("bookingscreen").style.opacity = 0;
+			setTimeout(function(){document.getElementById("bookingscreen").style.display = "none"; document.getElementById("bookingscreen").innerHTML = "";},500);
+		}
+
+		function opennewbookingscreen(){
+			document.getElementById("bookingscreen").style.display = "flex";
+			document.getElementById("bookingscreen").style.opacity = 1;
+			document.getElementById("bookingscreen").innerHTML = '<div id="confirmationinfo">You are booking tickets for:</div><div id="confirmation"><div id="confirmationinfoname">' + concert.concertname + '</div><div id="confirmationinfonumber">Number of tickets</div><input type="text" id="attendantnumberinput" value="1"/></div>		<div id="bookingbtncont">			<div id="bookingbtn" onclick="bookconcert();">Confirm booking</div>		</div>		';
+		}
+
+		function openmodifybookingscreen(attendantnumber){
+			document.getElementById("bookingscreen").style.display = "flex";
+			document.getElementById("bookingscreen").style.opacity = 1;
+			document.getElementById("bookingscreen").innerHTML = '<div id="confirmationinfo">You are modifying your booking for:</div><div id="confirmation"><div id="confirmationinfoname">' + concert.concertname + '</div><div id="confirmationinfonumber">Number of tickets</div><input type="text" id="attendantnumberinput" value="'+attendantnumber+'"/></div>		<div id="bookingbtncont">			<div id="bookingbtn" onclick="changebooking();">Modify booking</div>		</div>		<div id="divider"><div class="bar"></div><div>Or</div><div class="bar"></div></div>      <div id="cancelbookinginfo">Cancel your booking</div><div id="cancelbookingwarning">If you cancel your booking, you would have to contact the CCA.</div><div id="cancelbtncont">			<div id="cancelbtn" onclick="cancelbooking();">Cancel booking</div>		</div>';
+		}
+		
+		function sectionadaptor(){
+			var bookedconcerts = {};
+			var code = "";
+			if(localStorage.getItem("concerts-selfbookingcode")){
+				bookedconcerts = JSON.parse(localStorage.getItem("concerts-selfbookingcode"));
+				code = bookedconcerts[nowviewingid];
+			}
+			if(concert.hasOwnProperty("concertattendance")){
+				if(concert["concertattendance"].hasOwnProperty(code)){
+					document.getElementById('buytix').id = "bookedbuytix";
+					document.getElementById('fixedbuytix').id = "bookedfixedbuytix";
+				}
+			}
+			if(sections){
+				for(var i = 0; i < sections.length; i++){
+					var newsection = document.createElement('div');
+					newsection.id = "details"+i;
+					newsection.className = "detailsconts";
+					newsection.innerHTML = "<div class='desccontent desctitle'>"+sections[i][0]+"</div><div id='bar'></div><div class='desccontent'>"+sections[i][1]+"</div>";
+					document.getElementById('details').appendChild(newsection);
+				}
+			}
+		}
+
+		if(sections){
+			var fadecounter = 0;
+			var fadeinterval = setInterval(function(){
+				if(fadecounter==sections.length-1){
+					clearInterval(fadeinterval);
+				}
+				document.getElementById('details'+fadecounter).style.opacity = 1;
+				fadecounter++;
+			},100)
+		}
+
+		function scroll(){
+			if(document.getElementById('titlewrapper').getBoundingClientRect().y < 0){
+				document.getElementById('fixedtitlewrapper').style.display = "flex";
+			} else {
+				document.getElementById('fixedtitlewrapper').style.display = "none";
+			}
+		}
+
+		var raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame || window.oRequestAnimationFrame;
+
+        var lastscrollTop = document.body.getBoundingClientRect().top;
+
+        if (raf) {
+            loop();
+        }
+
+        function loop() {
+            var scrollTop = document.body.getBoundingClientRect().top;
+            if (lastscrollTop === scrollTop) {
+                raf(loop);
+                return;
+            } else {
+                lastscrollTop = scrollTop;
+                scroll();
+                raf(loop);
+            }
+        }
+	</script>
+</body>
+</html>

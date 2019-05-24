@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Teacher's Locker List</title>
+	<style>
+		*{
+			margin:0;
+			padding: 0;
+			font-family: Google Sans Display, Helvetica Neue;
+		}
+		#title{
+			width: calc(100vw - 40px);
+			margin-top: 100px;
+			padding-top: 20px;
+			padding-left: 20px;
+			font-size: 2.5em;
+			font-weight: bold;
+			transition: all 0.5s cubic-bezier(.25, .8, .25, 1);
+		}
+		#searchwrapper{
+			width: calc(100vw - 25px);
+			padding: 20px;
+			padding-left: 10px;
+			padding-right: 15px;
+			position: relative;
+			top: 0;
+			display: inline-flex;
+			background-color: white;
+		}
+		#search{
+			width: calc(100% - 14px);
+			height: 40px;
+			border-radius: 5px;
+			border:2px solid rgb(0, 32, 96);
+			padding-left: 10px;
+			position: relative;
+		}
+		#search:focus{
+			outline: none;
+		}
+		#bysub{
+			margin-top: 20px;
+			width: 100vw;
+			display: inline-flex;
+			flex-wrap: wrap;
+		}
+		.subs{
+			width: calc(50vw - 30px);
+			background-color: white;
+			height: 90px;
+			margin-left: 20px;
+			margin-bottom: 20px;
+			position: relative;
+			border-radius: 5px;
+			width:calc( 50vw - 30px );
+			transition: all 0.5s cubic-bezier(.25, .8, .25, 1);
+			position: relative;
+		}
+		.substxt{
+			position: absolute;
+			bottom: 10px;
+			left: 10px;
+		}
+		#Sciences{
+			background: -webkit-linear-gradient(-45deg, #ff5ee1 0%,#ff1a00 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(135deg, #ff5ee1 0%,#ff1a00 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+		}
+		#Maths{
+			background: -webkit-linear-gradient(-45deg, #f0ff00 0%,#fdcc00 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(135deg, #f0ff00 0%,#fdcc00 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+		}
+		#Humanities{
+			background: -webkit-linear-gradient(-45deg, #bad6ab 0%,#25cc73 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(135deg, #bad6ab 0%,#25cc73 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+		}
+		#Languages{
+			background: -webkit-linear-gradient(-45deg, #ffd65e 0%,#ff5d00 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(135deg, #ffd65e 0%,#ff5d00 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+		}
+		#Music{
+			background: -webkit-linear-gradient(-45deg, #fbffd4 0%,#fcc1df 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(135deg, #fbffd4 0%,#fcc1df 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+		}
+		#Arts{
+			background: -webkit-linear-gradient(-45deg, #9097f4 0%,#7cf697 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(135deg, #9097f4 0%,#7cf697 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+		}
+		#PE{
+			background: -webkit-linear-gradient(-45deg, #99c0e5 0%,#1500ff 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(135deg, #99c0e5 0%,#1500ff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+		}
+		@keyframes rainbow {
+		    0% { background-position: 100% 100% }
+		  100% { background-position: 0% 0% }
+		}
+		#More{
+			background: linear-gradient(135deg,
+    /* Base gradient stops */
+    #f6d365, #fda085, #f6d365, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3,
+    /* Repeat your base gradient stops */
+    #f6d365, #fda085, #f6d365, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3,
+    /* Repeat your first gradient stop */
+    #f6d365);
+  
+  background-size: 2000% 100%;
+			animation: rainbow 240s linear infinite;
+		}
+		.ttl{
+			padding-left: 20px;
+			font-weight: bold
+		}
+		.alp{
+			padding: 20px;
+			user-select: none;
+		}
+		#byalp{
+			display: inline-flex;
+			width: 100vw;
+			overflow: auto;
+		}
+		#searchresults{
+			position: fixed;
+			top: 0;
+			left: 0;
+			background-color: white;
+			z-index: 2;
+			display: none;
+			height: 100vh;
+			width: 100vw;
+			opacity: 0;
+			transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+		}
+		.lockers{
+			width: calc(100vw - 35px);
+			padding: 15px;
+			padding-left: 20px;
+			border-bottom: 1px solid grey;
+			display: inline-flex;
+		}
+		#searchresultswrapper{
+			position: absolute;
+			left: 0;
+			top: 80px;
+			height: calc( 100vh - 80px);
+			width: 100vw;
+			opacity: 0;
+			overflow-y: overlay;
+		}
+		#backbtn{
+			width: 0;
+			height: auto;
+			max-width: 44px;
+			max-height: 44px;
+			padding-right: 10px;
+			flex-grow: 1;
+			transition: none;
+		}
+		#closesub{
+			width: 44px;
+			padding: 10px;
+			height: auto;
+			transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+			position: fixed;
+			top:0;
+			opacity: 0;
+			display: none;
+			z-index: 3;
+		}
+		.teachersname{
+			flex-grow: 1;
+			height: fit-content;
+		}
+		.lockerno{
+			height: fit-content;
+		}
+		#minorsubs{
+			position: fixed;
+			left: 0;
+			top:0;
+			height: 0;
+			width: 100vw;
+			background-color: white;
+			z-index: 2;
+			overflow-y: overlay;
+		}
+		.minorsubel{
+			width: calc(100vw - 45px);
+			padding: 20px;
+			border-bottom: 1px solid grey;
+		}
+		.minorsubpr{
+			width: calc(100vw - 35px);
+			padding: 20px;
+			padding-left: 10px;
+			font-weight: bold;
+			background-color: #fafafa;
+			border-bottom: 1px solid grey;
+			color: #666;
+		}
+		.minorsubse{
+			width: calc(100vw - 45px);
+			padding: 20px;
+			border-bottom: 1px solid grey;
+		}
+	</style>
+</head>
+<body>
+	<div id="title">Teachers' Lockers</div>
+	<div id="searchwrapper">
+		<img id="backbtn" src="back.png"/>
+		<input type="text" id="search" placeholder="Search by name or subject">
+	</div>
+	<div id="searchresults"><div id="searchresultswrapper"></div></div>
+	<div id="byalpwrp">
+		<div class="ttl">By Alphabet</div>
+		<div id="byalp">
+		</div>
+	</div>
+	<div id="bysubwrp">
+		<div class="ttl">By Subjects</div>
+		<div id="bysub">
+			<div class="subs" onclick="expandsubs('Sciences');" id="Sciences"><div class="substxt" id="Sciencestxt">Sciences</div></div>
+			<div class="subs" onclick="expandsubs('Maths');" id="Maths"><div class="substxt" id="Mathstxt">Maths</div></div>
+			<div class="subs" onclick="expandsubs('Humanities');" id="Humanities"><div class="substxt" id="Humanitiestxt">Humanities</div></div>
+			<div class="subs" onclick="expandsubs('Languages');" id="Languages"><div class="substxt" id="Languagestxt">Languages</div></div>
+			<div class="subs" onclick="expandsubs('Music');" id="Music"><div class="substxt" id="Musictxt">Music</div></div>
+			<div class="subs" onclick="expandsubs('Arts');" id="Arts"><div class="substxt" id="Artstxt">Arts</div></div>
+			<div class="subs" onclick="gotosub('PE');" id="PE"><div class="substxt" id="PEtxt">Physical Education</div></div>
+			<div class="subs" onclick="expandsubs('More');" id="More"><div class="substxt" id="Moretxt">More...</div></div>
+		</div>
+	</div>
+	<img src="backwhite.png" onclick="contractsub();" id="closesub">
+	<div id="minorsubs"></div>
+	<script>var teachers = [
+	[161,["Mdm","Alicia","Ng","Yi","May","Yimay"],"Mdm Alicia Ng-Yi May",["General Paper"]],
+	[1,["Mdm","An","Fengyun","Feng","Yun"],"Mdm An Fengyun",["China Studies in Chinese","Chinese Language and Literature"]],
+	["",["Mr","Ang","Eng","Choon"],"Mr Ang Eng Choon",[""]],
+	[109,["Miss","Ang","Peiyu","Pei","Yu"],"Miss Ang Peiyu",["Maths (Senior High)"]],
+	["PE",["Miss","Aow","Ci","Hui","Cihui"],"Miss Aow Ci Hui",["Physical Education"]],
+	[3,["Mrs","Aisha","Kirti","Vora"],"Miss Aisha Kirti Vora",["Language Arts","Literature in English (Junior High)"]],
+	["",["Mr","Boh","Wei","Liang","Brandon","Weiliang"],"Mr Boh Wei Liang Brandon",[""]],
+	[6,["Mrs","Bok","Shung","Hwee","Grace","Shunghwee"],"Mrs Bok Shung Hwee Grace",["Geography (Senior High)"]],
+	[101,["Mr","Chan","Jia","Kun","Jason","Jiakun"],"Mr Chan Jia Kun Jason",["Active Citizenry Education","Geography (Junior High)"]],
+	[113,["Miss","Chang","Hui","Hui","Dorothy","Huihui"],"Miss Chang Hui Hui Dorothy",["Life Skills Programme"]],
+	[175,["Miss","Chang","Wan","Yin","Wanyin"],"Miss Chang Wan Yin",["Active Citizenry Education","Upper Sec Maths (Maths 1 & 2)"]],
+	[145,["Mdm","Chen","Huiqing","Hui","Qing","Christine"],"Mdm Chen Huiqing Christine",["General Paper"]],
+	[192,["Mr","Chen","Quansheng","Jason","Quan","Sheng"],"Mr Chen Quansheng (Jason)",["History (Junior High)"]],
+	[77,["Mr","Chen","Shunfa","Shun","Fa"],"Mr Chen Shunfa",[""]],
+	[141,["Mdm","Cheong","Jin","Hui","Jillian","Jinhui"],"Mdm Cheong Jin Hui Jillian",["Biology (Senior High)"]],
+	[83,["Miss","Chew","Geok","Joo","Geokjoo"],"Miss Chew Geok Joo",["Higher Chinese Language"]],
+
+	[153,["Mr","Chew","Kia","Khang","Kiakhang"],"Mr Chew Kia Khang",["Maths (Senior High)","Further Maths"]],
+	[19,["Mr","Chew","Soon","Chiang","Martin"],"Mr Chew Soon Chiang Martin",["General Paper","Literature in English (Senior High)"]],
+	["PE",["Mr","Chew","Tah","Lee","Tahlee"],"Mr Chew Tah Lee",["Physical Education"]],
+	["PE",["Mrs","Chew","Tan","Bee","Hong","Beehong"],"Mrs Chew Tan Bee Hong",["Physical Education"]],
+	[36,["Miss","Chia","Shu","Hui","Shuhui"],"Miss Chia Shu Hui",["Biology (Junior High)"]],
+	[14,["Miss","Chia","Siew","Ling","Siewling"],"Miss Chia Siew Ling",["Higher Chinese Language"]],
+	[15,["Miss","Chin","Mee","Yan","Esther","Meeyan"],"Miss Chin Mee Yan Esther",["Maths (Senior High)"]],
+	[45,["Miss","Chin","Shuang","Ning","Shuangning"],"Miss Chin Shuang Ning",["Chemistry (Senior High)"]],	
+	["",["Mr","Chin","Wei","Ming","Weiming"],"Mr Chin Wei Ming",[""]],
+	[138,["Mr","Chong","Kheng","Wye","Khengwye"],"Mr Chong Kheng Wye",["Physics (Senior High)"]],
+	["",["Mr","Chong","Hun","Chung","Hunchung"],"Mr Chong Hun Chung",["Maths (Senior High)"]],
+	[107,["Mdm","Cynthia","Lim","Ai","Lian","Ailian"],"Mdm Cynthia Lim Ai Lian",["Economics"]],
+	[11,["Mr","Deric","Low"],"Mr Deric Low",["General Paper"]],
+	[12,["Mr","Emmanuel","Pritish","Andrew","Sameer"],"Mr Emmanuel Pritish Andrew Sameer",["History (Junior High)"]],
+	[21,["Miss","Fang","Chye","Pin","Chyepin"],"Miss Fang Chye Pin",["Maths (Junior High)"]],
+	[142,["Mr","Foo","Thiam","Sin","Timothy","Thiamsin"],"Mr Foo Thiam Sin Timothy",["General Paper"]],
+	[115,["Ms","Fu","Yuanting","Desiree","Yuan","Ting"],"Ms Fu Yuanting Desiree",["Language Arts"]],
+	[18,["Mr","Galistan","Homer","Shan"],"Mr Galistan Homer Shan",["Geography (Junior High)"]],
+	[117,["Ms","Geraldine","Raphaela","Joseph"],"Ms Geraldine Raphaela Joseph",["Biology (Junior High)"]],
+	[23,["Mr","Gi","Soong","Chee","Soongchee"],"Mr Gi Soong Chee",["Computing (Senior High)"]],
+	[124,["Miss","Goh","Fenyu","Jessica","Fen","Yu"],"Miss Goh Fen Yu Jessica",["Maths (Junior High)"]],
+	[20,["Mr","Goh","Liangzhou","Liang","Zhou"],"Mr Goh Liangzhou",["Chinese Language and Literature","Translation"]],
+	[67,["Mr","Goh","Wei","Bin","Weibin"],"Mr Goh Wei Bin",["Chemistry (Senior High)"]],
+	["",["Mr","Goh","Wei","Jie","Jefferson","Weijie"],"Mr Goh Wei Jie Jefferson",[""]],
+	[208,["Mdm","Goh","Wei","Peng","Belinda"],"Mdm Goh Wei Peng Belinda",["Economics"]],
+	[24,["Mr","Han","Yaohong","Royston","Yao","Hong"],"Mr Han Yaohong Royston",["Biology (Junior High)"]],
+	[147,["Mdm","Heng","Li","Tze","Joanna","Litze"],"Mdm Heng Li Tze Jonana",["Biology (Junior High)"]],
+
+	["",["Mdm","Ho","Su","Siew"],"Mdm Ho Su Siew",[""]],
+	[143,["Mr","Ho","Weng","Lun","Wenglun"],"Mr Ho Weng Lun",[""]],
+	[156,["Mr","Ho","Xin","An","Xinan"],"Mr Ho Xin An",["Chemistry (Senior High)"]],
+	[28,["Mdm","Hong","Lan"],"Mdm Hong Lan",["Chinese Language (Senior High)","Chinese Language and Literature"]],
+	[26,["Miss","Hong","Shu","Qi","Shuqi"],"Miss Hong Shuqi",[""]],
+	[149,["Dr","How","Guan","Ji","Adrian","Guanji"],"Dr How Guan Ji Adrian",["Biology (Senior High)"]],
+	[30,["Mdm","Ilyana","Hardanti","Bte","Hartono","W"],"Mdm Ilyana Hardanti Bte Hartono W",["Language Arts"]],
+	["",["Mrs","Janet","Long","Leong","Foong","Lin","Foonglin"],"Mrs Janet Long - Leong Foong Lin",[""]],
+	["",["Mr","Jeffrey","Ng","Jie","Li","Jieli"],"Mr Jeffrey Ng Jie Li",["Biology (Junior High)"]],
+	["",["Mdm","Jiang","Ling"],"Mdm Jiang Ling",[""]],
+	["116",["Mdm","Joyce","Teh","Kiam","Peng","Kiampeng","Mrs","Goh"],"Mrs Joyce Goh-Teh Kiam Peng",["General Art Programme"]],
+	[52,["Mdm","Juwana","Bte","Juwahir"],"Mdm Juwana Bte Juwahir",["Language Arts"]],
+	[40,["Miss","Karuppiah","Vinnarasi","Celestyn"],"Miss Karuppiah Vinnarasi Celestyn",["Economics"]],
+	[35,["Mdm","Kheng","Hwee","Teng","Hweeteng"],"Mdm Kheng Hwee Teng",["Language Arts"]],
+	["",["Mdm","Khoo","Geok","Hwa","Geokhwa"],"Mdm Khoo Geok Hwa",["Maths (Junior High)"]],
+	[48,["Mr","Koh","Chin","Poh","Chinpoh"],"Mr Koh Chin Poh",["Biology (Senior High)"]],
+	[33,["Miss","Lai","Rou","Wen","Rui"],"Miss Lai Rouwen@Lai Ruiwen",["Maths (Junior High)"]],
+	["",["Mdm","Lam","Non","Har","Serene","Nonhar"],"Mdm Lam Non Har Serene",[""]],
+	["",["Mdm","Lau","Min","Yin","Emmeline","Minyin"],"Mdm Lau Min Yin Emmeline",[""]],
+	["",["Mdm","Lau","Mui","Choo","Wendy","Muichoo"],"Mdm Lau Mui Choo Wendy",[""]],
+
+	[137,["Ms","Law","Seow","Li","Seowli"],"Ms Law Seow Li",["Geography (Junior High)"]],
+	[47,["Mr","Lee","Chee","Keen","Cheekeen"],"Mr Lee Chee Keen",["Chinese Language (Senior High)","General Studies in Chinese"]],
+	["",["Mdm","Lee","Chin","Sin","Chinsin"],"Mdm Lee Chin Sin",[""]],
+	[63,["Mr","Lee","Joo","Li","Steven"],"Mr Lee Joo Li Steven",["Maths (Senior High)"]],
+	[39,["Dr","Lee","Kian","Lam","Kianlam"],"Dr Lee Kian Lam",["Physics (Senior High)"]],
+	["",["Mr","Lee","Wei","Keong","Weikeong"],"Mr Lee Wei Keong",["Physics (Junior High)"]],
+	["PE",["Miss","Lee","Siew","Choo","Siewchoo"],"Miss Lee Siew Choo",["Physical Education"]],
+	[132,["Miss","Lee","Wai","Ching","Waicheng"],"Miss Lee Wai Ching",["Maths (Junior High)"]],
+	[64,["Mr","Lee","Wee","Siang","Weesiang","Joseph"],"Mr Joseph Lee Wee Siang",["Chemistry (Senior High)"]],
+	[151,["Mr","Lee","Wei","Keong","Weikeong"],"Mr Lee Wei Keong",[""]],
+	[95,["Mdm","Lee","Xiuli","Niki","Xiu","Li"],"Mdm Lee Xiuli (Niki)",["Economics"]],
+	["",["Mdm","Lee","Yuet","Meng","Audrina","Yuetming"],"Mdm Lee Yuet Meng Audrina",[""]],
+	["PE",["Mr","Leo","June","Kit","Junekit"],"Mr Leo June Kit",["Physical Education"]],
+	["",["Mdm","Leow","Sock","Cheng","Pearly","Sockcheng"],"Mdm Leow Sock Cheng Pearly",["Economics"]],
+	[159,["Mr","Lester","Ian","Lim","Choong","Siang"],"Mr Lester Ian Lim Choong Siang",["General Paper","English Language and Linguistics"]],
+	[104,["Mr","Lew","Wei","Sern","Vincent","Weisern"],"Mr Lew Wei Sern Vincent",[""]],
+	[53,["Miss","Lie","Seok","Hua","Seokhua"],"Miss Lie Seok Hua",["Higher Chinese Language"]],
+	[54,["Miss","Lim","Ai","Juan","Eileen","Aijuan"],"Miss Lim Ai Juan Eileen",["History (Junior High)"]],
+	[173,["Mdm","Lim","Bee","Kee","Mrs","Tan","Beekee"],"Mdm Lim Bee Kee (Mrs Tan)",["Active Citizenry Education","History (Junior High)"]],
+	[158,["Mdm","Lim","Boon","Hwee","Boonhwee"],"Mdm Lim Boon Hwee",[""]],
+
+	[130,["Mr","Lim","Boon","Siong","Boonsiong"],"Mr Lim Boon Siong",["Physics (Senior High)"]],
+	[56,["Miss","Lim","Chiew","Her","Chiewher"],"Miss Lim Chiew Her",["Maths (Junior High)"]],
+	[111,["Miss","Lim","Ee","Lok","Cassandra","Eelok"],"Miss Cassandra Lim Ee Lok",["English Language and Linguistics"]],
+	[80,["Mdm","Lim","Ern","Chze","Angie","Ernchze"],"Mdm Lim Ern Chze (Angie)",["Physics (Junior High)"]],
+	[165,["Mr","Lim","Hwa","Chuan","Hwachuan"],"Mr Lim Hwa Chuan",["Chemistry (Junior High)"]],
+	[8,["Mdm","Lim","Hwee","Teng","Hweeteng"],"Mdm Lim Hwee Teng",["Economics"]],
+	[148,["Mdm","Lim","June","Hui","Grace","Junehui"],"Mdm Lim June Hui Grace",["Chemistry (Senior High)"]],
+	[152,["Mr","Lim","Leong","Hwee","Leonghwee"],"Mr Lim Leong Hwee",["Chemistry (Junior High)"]],
+	[59,["Mr","Lim","Lian","Joo","Jeremy","Lianjoo"],"Mr Lim Lian Joo (Jeremy)",["Physics (Junior High)"]],
+	["",["Mr","Lim","Pia","Leong","Pialeong"],"Mr Lim Pia Leong",["Maths (Junior High)"]],
+	[62,["Miss","Lim","Yuan","Chin","Yuanchin"],"Miss Lim Yuan Chin",["Higher Chinese Language"]],
+	["",["Mr","Lin","Jun","Kai","Junkai"],"Mr Lin Jun Kai",[""]],
+	[31,["Mdm","Lin","Le","Ming","Leming"],"Mdm Lin Le Ming",[""]],
+	["",["Mdm","Loh","Chien","Yuen","June","Chienyuen"],"Loh Chien Yuen (June) ",[""]],
+	["",["Mdm","Loh","Quee","Yah","Queeyah"],"Mdm Loh Quee Yah",["Higher Chinese Language"]],
+	[42,["Mdm","Loh","Wan","Fong","Wanfong","Sharlene"],"Mdm Loh Wan Fong (Sharlene)",["General Paper"]],
+	[55,["Mr","Loke","Jee","Wah","Jeewah"],"Mr Loke Jee Wah",["Maths (Junior High)"]],
+	[90,["Mr","Low","Chee","Keong","Timothy","Liu","Zhi","Qiang","Cheekeong","Zhiqiang"],"Low Chee Keong Timothy (Liu Zhiqiang)",["Higher Chinese Language","Translation","General Studies in Chinese"]],
+	[170,["Mdm","Low","Sai","Kian","Saikian"],"Mdm Low Sai Kian",["Higher Chinese Language"]],
+
+	[68,["Mdm","Low","Siok","Hong","Siokhong"],"Mdm Low Siok Hong",["Maths (Junior High)"]],
+	[58,["Mr","Low","Thiam","Yew","Alvin","Thiamyew"],"Mr Low Thiam Yew Alvin",["Geography (Senior High)"]],
+	[136,["Miss","Low","Xin","Tian","Xintian"],"Miss Low Xin Tian",[""]],
+	[70,["Mr","Lu","Han","Lin","Hanlin"],"Mr Lu Han Lin",["Chinese Language (Senior High)","Chinese Language and Literature"]],
+	[146,["Mr","Luo","Kangshun","Kang","Shun","Andy"],"Mr Luo Kangshun Andy",[""]],
+	[73,["Miss","Mah","Shi","Hui","Shihui","Adeline"],"Miss Mah Shi Hui Adeline",["General Paper","English Language and Linguistics"]],
+	[185,["Miss","Maryam","Binte","Mohamed","Mokhtar"],"Miss Maryam Binte Mohamed Mokhtar",["General Paper","Literature in English (Senior High)"]],
+	[167,["Mr","Melvyn","Tan","Yeow","Leng"],"Mr Melvyn Tan Yeow Leng",["Geography (Senior High)"]],
+	[78,["Mdm","Mo","Fengling","Feng","Ling"],"Mdm Mo Fengling",["Higher Chinese Language","Literature in Chinese","Chinese Language (Junior High)"]],
+	[163,["Mdm","Neo","Sock","Khim","Sockkhim"],"Mdm Neo Sock Khim",["Chemistry (Senior High)"]],
+	[120,["Ms","Ng","Bei","Ling","Vina","Beiling"],"Ms Ng Bei Ling Vina",["Chemistry (Senior High)"]],
+	[61,["Mr","Ng","Boon","Peng","Benjamin"],"Mr Ng Boon Peng Benjamin",["Physics (Junior High)"]],
+	[75,["Miss","Ng","Mui","Leng","Muileng"],"Miss Ng Mui Leng",["Geography (Junior High)"]],
+	[44,["Mr","Ivan","David","Ng","Qi","Fan","Qifan"],"Mr Ivan David Ng Qi Fan",["Art (Senior High)"]],
+	[76,["Miss","Ng","Shi"],"Miss Ng Shi Shi",["Chemistry (Junior High)"]],
+	[133,["Miss","Ng","Si","Yun","Catherine","Siyun"],"Miss Ng Si Yun Catherine",[""]],
+	[129,["Mdm","Ng","Wan","Chin","Wanchin","Huang","Wanjun"],"Mdm Ng Wan Chin (Huang Wanjun)",["Biology (Senior High)"]],
+	[190,["Mr","Ng","Yu","Jie","Yujie"],"Mr Ng Yu Jie",["Maths (Senior High)"]],
+	[32,["Mdm","Noorizan","Beevi","Binte","Abdul","Aziz"],"Mdm Noorizan Beevi Binte Abdul Aziz",[""]],
+	[126,["Mdm","Noorshidah","Bte","Ismail","Ibrahim"],"Mdm Noorshidah Bte Ismail (Bte Ibrahim)",[""]],
+
+	[57,["Mdm","Nora","Bte","Supa\'at"],"Mdm Nora Bte Supa\'at",[""]],
+	[174,["Mdm","Norzian","Bte","Mohamed","Yunos"],"Mdm Norzian Bte Mohamed Yunos",[""]],
+	[41,["Miss","Norzahidah","Bte","Juhari"],"Miss Norzahidah Bte Juhari",["General Art Programme"]],
+	[49,["Mdm","Nur","Aisha","Bte","Jaini"],"Mdm Nur Aisha Bte Jaini",["Geography (Junior High)"]],
+	[4,["Mdm","Nurasyikin","Binte","Kassim"],"Mdm Nurasyikin Binte Kassim",["Language Arts"]],
+	[93,["Mdm","Nuurassyikin","Binte","Yusnan"],"Mdm Nuurassyikin Binte Yusnan",["Language Arts","Literature in English (Junior High)"]],
+	[84,["Mrs","Ong","Chyai","Lian","Grace","Chyailian"],"Mrs Ong Chyai - Lian Grace",["Chemistry (Junior High)"]],
+	[154,["Mr","Ong","Eldwen"],"Mr Ong Eldwen",["Maths (Junior High)"]],
+	[88,["Mdm","Ong","Lay","Pheng","Laypheng","Mrs","Tan"],"Mdm Ong Lay Pheng (Mrs Tan)",["Chemistry (Junior High)"]],
+	[85,["Mr","Ong","Pee","Yeow","Peeyeow"],"Mr Ong Pee Yeow",["Maths (Senior High)"]],
+	[13,["Mr","Ong","Wei","Xiang","Adrian","Weixiang"],"Mr Ong Wei Xiang Adrian",["Chemistry (Junior High)"]],
+	[134,["Mr","Ong","Wen","Kai","Wenkai"],"Mr Ong Wen Kai",["Physics (Senior High)"]],
+	[112,["Mr","Ooi","Ming","Fong","James","Mingfong"],"Mr Ooi Ming Fong James",["Maths (Senior High)","Further Maths"]],
+	[27,["Mdm","Pamela","Kuppusamy","Samales"],"Mdm Pamela Kuppusamy Samales",["Maths (Junior High)"]],
+	[86,["Mr","Pang","Hai","Chiet","Haichiet"],"Mr Pang Hai Chiet",["Computing (Junior High)"]],
+	[150,["Miss","Pear","Siew","Lee","Siewlee"],"Miss Pear Siew Lee",["Geography (Senior High)"]],
+	["",["Mrs","Phua","Loo","Poh","Lim","Pohlim"],"Mrs Phua - Loo Poh Lim",["Chemistry (Junior High)"]],
+	[22,["Mdm","Poh","Pei","Hsia","Debbie"],"Mdm Poh Pei Hsia Debbie",["History (Junior High)"]],
+	[128,["Miss","Rathiy","Devi","D/O","Ramanathan"],"Miss Rathiy Devi D/O Ramanathan",["General Paper"]],
+	[110,["Mdm","Renata","Priscilla","Winata","Renee"],"Mdm Renata Priscilla Winata",["History (Junior High)","Active Citizenry Education"]],
+
+	[191,["Mr","Ronson","Neo","Boon","Kiat","Boonkiat"],"Mr Ronson Neo Boon Kiat",["Physics (Junior High)"]],
+	[94,["Mdm","Sangeetha","Gangadharan"],"Mdm Sangeetha Gangadharan",["Language Arts","Literature in English (Junior High)"]],
+	[127,["Mdm","Sau","Wee","Wee","Weewee"],"Mdm Sau Wee Wee",["Higher Chinese Language"]],
+	[74,["Mdm","Seah","Hui","Ting","Huiting","Nathalie","Mrs","Tan"],"Mdm Seah Hui Ting Nathalie (Mrs Tan)",["Maths (Senior High)"]],
+	[166,["Miss","Seet","Seok","Beng","Stella","Seokbeng"],"Miss Stella Seet Seok Beng",["Chemistry (Junior High)"]],
+	[171,["Miss","See","Toh","Pei","Ling","Peiling"],"Miss See-Toh Pei Ling",["General Paper"]],
+	[38,["Mdm","Selena","Vera","Hey"],"Mdm Selena Vera Hey",["General Paper","English Language and Linguistics"]],
+	[16,["Mr","Seng","Sze","Ming","Sia","Daniel","Szeming"],"Mr Seng Sze Ming - Sia (Daniel)",["History (Senior High)"]],
+	[102,["Ms","Sherene","Jeevitha","Joseph"],"Ms Sherene Jeevitha Joseph",["Biology (Junior High)"]],
+	[183,["Miss","Shi","Mengchen","Meng","Chen"],"Miss Shi Mengchen",[""]],
+	["",["Mdm","Sim","Hoon","Kuan","Hoonkuan"],"Mdm Sim Hoon Kuan",[""]],
+	["",["Mdm","Sim","Yin","Hui","Yinhui"],"Mdm Sim Yin Hui",[""]],
+	[34,["Mdm Siti Shafaa Bte Yang Razali"],"Mdm Siti Shafaa Bte Yang Razali",["General Paper"]],
+	[81,["Miss","Zakia","Binte","Zainol"],"Miss Zakia Binte Zainol",["General Art Programme"]],
+	[29,["Miss","Soh","Wen","Qi","Rachel","Wenqi"],"Miss Soh Wen Qi (Rachel)",["History (Senior High)"]],
+	["Music",["Mdm","Tan","Ai","Ling","Debbie","Ailing"],"Mdm Tan Ai Ling Debbie",[""]],
+	["PE",["Mr","Tan","Chee","Keong","Matthew"],"Mr Tan CHee Keong Matthew",["Physical Education"]],
+	[131,["Mr","Tan","Chien","Huah","Peter","Chienhuah"],"Mr Tan Chien Huah (Peter)",["History (Senior High)"]],
+	["",["Miss","Tan","Chien","Ming"],"Miss Tan Chien Ming",["Economics"]],
+
+	[98,["Mr","Tan","Chin","Hui","Chinhui","Alan"],"Mr Tan Chin Hui (Alan)",["Chemistry (Senior High)"]],
+	[99,["Mdm","Tan","Chor","Keng","Christine","Chorkeng"],"Mdm Christine Tan Chor Keng",[""]],
+	[100,["Mr","Tan","Chwee","Bock","Chweebock"],"Mr Tan Chwee Bock",["General Paper"]],
+	["PE",["Mr","Tan","Hee","Ming","Heeming"],"Mr Tan Hee Ming",["Physical Education"]],
+	[140,["Mr","Tan","Jia","Yi","Joel","Jiayi"],"Mr Tan Jia Yi Joel",["Language Arts"]],
+	[172,["Mdm","Tan","Jia","Qi","Jiaqi"],"Mdm Tan Jia Qi",["Chemistry (Senior High)"]],
+	[103,["Mdm","Tan","Kae","Ling","Kaeling"],"Mdm Tan Kae Ling",["Maths (Senior High)"]],
+	[105,["Mr","Tan","Lee","Hwee","Leehwee"],"Mr Tan Lee Hwee",["Maths (Junior High)"]],
+	["",["Mr","Tan","Leong","Howe","Leonghowe"],"Mr Tan Leong Howe",[""]],
+	[157,["Mdm","Tan","Mei","Qiang","Meiqiang"],"Mdm Tan Mei Qiang",["Chemistry (Junior High)"]],
+	[25,["Mdm","Tan","Siu","Yian","Jerena","Mrs","Su"],"Tan Siu Yian Jerena (Mrs Su)",["General Paper"]],
+	[65,["Mdm","Tan","Swee","Leng","Sweeleng"],"Mdm Tan Swee Leng",["Economics"]],
+	["PE",["Mr","Tan","Tui","Gee","Tuigee"],"Mr Tan Tui Gee",["Physical Education"]],
+	[5,["Miss","Tan","Yu","Shi","Yushi"],"Mdm Tan Yu Shi",["Art (Senior High)"]],
+	[184,["Mrs","Tang","Yin","Chee","Richard","Yinchee","Mdm","Ling","Ling","Lingling"],"Mrs Tang-Lim Ling Ling",["Life Skills Programme"]],
+	[79,["Mrs","Tang","Wai","Keen","Joyce","Waikeen"],"Mrs Tang Wai Keen (Joyce)",["Maths (Junior High)"]],
+	["",["Mr","Tang","Yew","Seng","Yewseng"],"Mr Tang Yew Seng",[""]],
+	["",["Dr","Tay","Teow","Kiat","Teowkiat"],"Dr Tay Teow Kiat",[""]],
+	[66,["Mr","Teo","Chai","Hock"],"Mr Teo Chai Hock",["Physics (Senior High)"]],
+	[118,["Mdm","Teo","Geok","Heok","Geokheok"],"Mdm Teo Geok Heok",["Higher Chinese Language"]],
+	[119,["Mr","Teo","Joo","Cheong","Joocheong"],"Mr Teo Joo Cheong",["Active Citizenry Education"]],
+	[89,["Miss","Teo","Yan","Ni","Linda","Yanni"],"Miss Teo Yan Ni Linda",["Economics"]],
+	[121,["Mr","Teoh","Ai","Keong","Aikeong"],"Mr Teoh Ai Keong",["Higher Chinese Language"]],
+	[122,["Mr","Tiah","Junkai","Jun","Kai"],"Mr Tiah Junkai",["Chemistry (Senior High)"]],
+
+
+	["",["Mdm","Tong","Siok","Mei","Siokmei"],"Mdm Tong Siok Mei",[""]],
+	[82,["Miss","Vaz","Cecilia","Anne","Angela"],"Miss Vaz Cecilia Anne Angela",["Language Arts","English Language"]],
+	[125,["Mdm","Wang","Yanchun","Yan","Chun"],"Mdm Wang Yanchun",["China Studies in Chinese","Chinese Language (Senior High)"]],
+	[7,["Mr","Wee","Hock","Guan","Hockguan"],"Mr Wee Hock Guan",["Maths (Senior High","Further Maths"]],
+	[168,["Mdm","Wee","Liang","Ee","Liangee"],"Mdm Wee Liang Ee",[""]],
+	[60,["Ms","Wong","Lu","Ting","Luting"],"Ms Wong Lu Ting",["Higher Chinese Language","Literature in Chinese"]],
+	[50,["Miss","Wong","Min","Tzu","Sharilyn","Mintzu"],"Miss Wong Min Tzu Sharilyn",["Language Arts"]],
+	[183,["Mr","Wong","Ting","Ee","Tingee"],"Mdm Wong Ting Ee",["Economics"]],
+	[20,["Mdm","Yang","Chien","Hwa","Chienhwa"],"Mdm Yang Chien Hwa",[""]],
+	[69,["Mdm","Yang","Yun","Hui","Yunhui","Faith","Mrs","Foo"],"Mdm Yang Yunhui (Faith)",["Maths (Senior High)"]],
+	[96,["Mr","Yap","Chang","Xin","Changxin","Daryl"],"Mr Yap Chang Xin Daryl",["General Paper","Literature in English (Senior High)"]],
+	[160,["Mr","Yap","Kian","Eng","Michael","Kianeng"],"Mr Yap Kian Eng (Michael)",["Physics (Junior High)"]],
+	["PE",["Mr","Yap","Kok","Hung","Kokhung"],"Mr Yap Kok Hung",["Physical Education"]],
+	[10,["Mdm","Ye","Mei","Xiu","Meixiu"],"Mdm Ye Meixiu",["Biology (Senior High)"]],
+	[92,["Mr","Yeo","Cheng","Kok","Chengkok"],"Mr Yeo Cheng Kok",["Higher Chinese Language"]],
+	[164,["Mdm","Yeo","Kim","Neo","Michelle","Kimneo"],"Mdm Yeo Kim Neo Michelle",["Language Arts"]],
+	["Music",["Miss","Yick","Jue","Ru","Jueru"],"Miss Yick Jue Ru",[""]],
+	[162,["Mdm","Yip","Sook","Kwan","Sookkwan"],"Mdm Yip Sook Kwan",["Geography (Junior High)"]],
+	[46,["Miss","Zarifah","Binte","Zainal"],"Miss Zarifah Binte Zainal",[""]],
+	[17,["Mdm","Zhang","Liping","Li","Ping"],"Mdm Zhang Liping",["Higher Chinese Language"]],
+	[139,["Mr","Zhang","Weidong","Wei","Dong"],"Mr Zhang Weidong",["China Studies in Chinese","Chinese Language (Senior High)"]],
+	[144,["Mr","Zhao","Bolun","Ian","Bo","Lun"],"Mr Zhao Bolun Ian",[""]],
+	[169,["Miss","Diana","Loi"],"Miss Diana Loi",["Language Arts"]],
+	[186,["Mr","Joshua","Kim","Kuan","Kimkuan"],"Mr Joshua Kim Kuan",[""]],
+
+	[188,["Miss","Lee","Xiner","Xin","Er"],"Miss Lee Xiner",[""]],
+]</script>
+	<script>
+		
+		var alps = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",];
+		for(var i = 0; i < alps.length; i++){
+			var alp = document.createElement('div');
+			alp.className = "alp";
+			alp.innerHTML = '<div onclick="clickalps(\''+alps[i]+'\')">'+alps[i]+'</div>';
+			alp.id = alps[i];
+			$('byalp').appendChild(alp);
+		}
+		function $(n){
+			return document.getElementById(n);
+		}
+		function clickalps(alp){
+			localStorage.setItem("teacherslockerlist-alps",alp);
+			window.location.href="byalp.html";
+		}
+		$("search").addEventListener("focus",focussearch);
+		$("backbtn").addEventListener("click",blursearch);
+		function focussearch(){
+			var searchwrapper = $("searchwrapper");
+			searchwrapper.style.zIndex = 3;
+			$('searchresults').style.display = "block";
+			$('backbtn').style.transition = "all 4s cubic-bezier(.25, .8, .25, 1)";
+			$('backbtn').style.width = "100%";
+			var initialy = searchwrapper.getBoundingClientRect().y;
+			searchwrapper.style.top = initialy+"px";
+			searchwrapper.style.position="fixed";
+			setTimeout(function(){searchwrapper.style.transition="all 0.6s cubic-bezier(.25, .8, .25, 1)";searchwrapper.style.top = 0;$('searchresults').style.opacity = "1";},1);setTimeout(function(){$('searchresultswrapper').style.opacity = "1";},500);
+		}
+		function blursearch(){
+			$("searchwrapper").style.transition = "";
+			$("searchwrapper").style.zIndex = "";
+			$('searchresultswrapper').style.opacity = "0";
+			$("searchwrapper").style.position="relative";
+			$("searchwrapper").style.top = "0";
+			$('searchresults').style.opacity = 0;
+			$('backbtn').style.transition = "all 0.5s cubic-bezier(.25, .8, .25, 1)";
+			$('backbtn').style.width = "0";
+			setTimeout(function(){$('searchresults').style.display = "none";},300);
+		}
+		var queries = [];
+		$('search').addEventListener("keyup",search);
+		function search(){
+			if ($('search').value.length== 0){
+				$('searchresultswrapper').innerHTML = "";
+			} else {
+				setTimeout(function(){queries = $('search').value.split(' ');
+				var queriedteachers = teachers.filter(checkindv);
+				$('searchresultswrapper').innerHTML = "";
+				for(var i = 0; i < queriedteachers.length; i++){
+					var list = document.createElement('div');
+					list.id = "locker"+queriedteachers[i][0];
+					list.className = "lockers";
+					list.innerHTML = "<div class='teachersname'>"+queriedteachers[i][2]+"</div><div class='lockerno'>"+queriedteachers[i][0]+"</div>";
+					$('searchresultswrapper').appendChild(list);
+				}},1);
+			}
+		}
+		function checkindv(teacher){
+			for(var i = 0; i < queries.length; i++){
+				var exists = false;
+				for(var j = 0; j < teacher[1].length; j++){
+					if(teacher[1][j].toLowerCase().indexOf(queries[i].toLowerCase()) != -1){
+						exists = true;
+						break;
+					}
+				}
+				for(var j = 0; j < teacher[3].length; j++){
+					if(teacher[3][j].toLowerCase().indexOf(queries[i].toLowerCase()) != -1){
+						exists = true;
+						break;
+					}
+				}
+				if(exists){
+					continue;
+				}
+				return false;
+			}
+			return true;
+		}
+		var dataSciences = [["Lower Sec Sciences",["Lower Sec Sciences","Computing (Lower Sec)"]],["Upper Sec Sciences",["Physics (Upper Sec)","Chemistry (Upper Sec)","Biology (Upper Sec)"]],["Senior High Sciences",["Physics (Senior High)","Chemistry (Senior High)","Biology (Senior High)","Computing (Senior High)"]]];
+		var dataMaths = [["Lower Sec",["Lower Sec Maths"]],["Upper Sec",["Upper Sec Maths (Maths 1 & 2)","Financial Literacy","Upper Sec Maths (\'O\' Level)"]],["Senior High",["Senior High Maths and Further Maths"]]];
+		var dataHumanities = [["Lower Sec",["Geography (Lower Sec)","History (Lower Sec)","Thinking & Research Programme (Lower Sec)"]],["Upper Sec",["Geography (Upper Sec)","History (Upper Sec)","Thinking & Research Programme (Upper Sec)","Social Studies (\'O\' Level)"]],["Senior High",["Economics","Geography (Senior High)","History (Senior High)"]]];
+		var dataLanguages = [["Lower Sec",["Language Arts (Lower Sec)","Higher Chinese (Lower Sec)"]],["Upper Sec",["Language Arts (Upper Sec)","Literature in English (Upper Sec)","English Language","Higher Chinese (Upper Sec)","Chinese (Upper Sec)","Literature in Chinese"]],["Senior High",["General Paper","Chinese (Senior High)","English Language and Linguistics","Literature in English (Senior High)","Chinese Language and Literature","Translation Chinese","Chinese Studies in Chinese","General Studies in Chinese"]]];
+		var dataMusic = ["General Music Programme","Music Elective Programme","Higher Music","Music (Senior High)"];
+		var dataArts = ["General Art Programme","Art (Special Programme)","Art (Senior High)"];
+		var dataMore = ["Appreciation of Chinese Culture","Life Skills Programme","Character & Citizenship Education","Active Citizenry Education"]
+		
+		var expandedsub = "";
+		var majorsuby = 0;
+		var majorsubx = 0;
+
+		function expandsubs(majorsub){
+			expandedsub = majorsub;
+			var minorsubs = window["data"+majorsub];
+			majorsuby = $(majorsub).getBoundingClientRect().y;
+			majorsubx = $(majorsub).getBoundingClientRect().x;
+			$(majorsub).style.transition = "all 0.5s cubic-bezier(.25, .8, .25, 1)";
+			$(majorsub).style.left = majorsubx+"px";
+			$(majorsub).style.zIndex = 3;
+			$(majorsub).style.marginLeft = 0;
+			$(majorsub).style.height = "calc(90px + 2.5em)";
+			$(majorsub+"txt").style.paddingLeft = "10px";
+			$(majorsub+"txt").style.paddingBottom = "10px";
+			$(majorsub).style.top = majorsuby+"px";
+			$('minorsubs').style.display = "block";
+			$('minorsubs').style.opacity = 1;
+			$('minorsubs').style.top = majorsuby+"px";
+			$('closesub').style.display = "block";
+			$('title').style.opacity = 0;
+			$('searchwrapper').style.opacity = 0;
+			setTimeout(function(){
+				$('closesub').style.opacity = 1;
+				$(majorsub).style.position = "fixed";
+				$('minorsubs').style.transition = "all 0.65s cubic-bezier(.25, .8, .25, 1)";
+				$("minorsubs").style.height = "calc(100vh - 150px - 2.5em)";
+				$('minorsubs').style.top = "calc(150px + 2.5em)";
+				$(majorsub).style.left = 0;
+				$(majorsub).style.width = "100vw";
+			},1);
+			setTimeout(function(){
+				$(majorsub).style.top = 0;
+				$(majorsub).style.borderRadius = 0;
+				$(majorsub).style.fontSize = "2.5em";
+			},100)
+			populateminorsubs(minorsubs);
+		}
+
+		function populateminorsubs(minorsubs){
+			$('minorsubs').innerHTML="";
+			for(var j = 0; j < minorsubs.length; j++){
+				if(typeof minorsubs[j] == "string"){
+					var minorsubel = document.createElement('div');
+					minorsubel.id = "sub"+minorsubs[j];
+					minorsubel.innerHTML = "<div onclick='gotosub(\""+minorsubs[j]+"\")'>"+minorsubs[j]+"</div>";
+					minorsubel.className = "minorsubel";
+					$('minorsubs').appendChild(minorsubel);
+				} else {
+					var minorsubpr = document.createElement('div')
+					minorsubpr.innerHTML = minorsubs[j][0];
+					minorsubpr.className = "minorsubpr";
+					$('minorsubs').appendChild(minorsubpr);
+					for(var k = 0; k < minorsubs[j][1].length; k++){
+						var minorsubse = document.createElement('div');
+						minorsubse.id = "sub"+minorsubs[j][1][k];
+						minorsubse.innerHTML = "<div onclick='gotosub(\""+minorsubs[j][1][k]+"\")'>"+minorsubs[j][1][k]+"</div>";
+						minorsubse.className = "minorsubse";
+					$('minorsubs').appendChild(minorsubse);
+					}
+				}
+			}
+		}
+
+		function contractsub(){
+			$('closesub').style.display = "none";
+			$(expandedsub+"txt").style.paddingLeft = "";
+			$(expandedsub+"txt").style.paddingBottom = "";
+			$(expandedsub).style.position = "fixed";
+			$(expandedsub).style.width = "calc( 50vw - 30px )";
+			$(expandedsub).style.top = majorsuby+"px";
+			$(expandedsub).style.left = majorsubx+"px";
+			$(expandedsub).style.height = "90px";
+			$(expandedsub).style.fontSize = "";
+			$(expandedsub).style.borderRadius = "";
+			$('minorsubs').style.transition = "all 0.3s cubic-bezier(.25, .8, .25, 1)";
+			$('minorsubs').innerHTML = "";
+			setTimeout(function(){
+			$('title').style.opacity = 1;
+			$('searchwrapper').style.opacity = 1;
+			$(expandedsub).style.transition = "none";
+			$(expandedsub).style.position = "relative";
+			$(expandedsub).style.top = "";
+			$(expandedsub).style.marginLeft = "";
+			$(expandedsub).style.left = "";
+			$('minorsubs').style.opacity = 0;},300)
+			setTimeout(function(){$('minorsubs').style.transition = "none";
+			$('minorsubs').style.height = 0;
+			$(expandedsub).style.zIndex = "";
+			$('minorsubs').style.display = "none";},601);
+		}
+
+		function gotosub(sub){
+			localStorage.setItem("teacherslockerlist-subs",sub);
+			window.location.href="bysub.html";
+		}
+	</script>
+</body>
+</html>

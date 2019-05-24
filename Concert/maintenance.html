@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Document</title>
+	<style>
+		*{
+			padding: 0;
+			margin:0;
+			font-family: Google Sans Display, Roboto, Segoe UI, Helvetica, Arial;
+		}
+		#tabscont{
+			width: 100%;
+			border-bottom: 2px solid rgb(0, 32, 96);
+			display: flex;
+		}
+		#tabscont2{
+			width: 100%;
+			border-bottom: 2px solid rgb(0, 32, 96);
+			display: flex;
+		}
+		.tabs{
+			border-right: 2px solid rgb(0, 32, 96);
+			width: 100%;
+			text-align: center;
+		}
+		.attendants{
+			display: flex;
+			padding: 20px;
+			border-bottom: 1px solid grey;
+		}
+		.leaders{
+			display: flex;
+			padding: 20px;
+			border-bottom: 1px solid grey;
+		}
+		.concerts{
+			display: flex;
+			padding: 20px;
+			border-bottom: 1px solid grey;
+		}
+		.members{
+			display: flex;
+			padding: 20px;
+			border-bottom: 1px solid grey;
+		}
+		.btn{
+			padding: 20px;
+			width: fit-content;
+			background-color: rgb(0, 32, 96);
+			color: white;
+			border-radius: 5px;
+			margin: 20px;
+		}
+		.tabsinner{
+			padding: 20px;
+		}
+		#allcont{
+			position: fixed;
+			width: 100%;
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+		}
+		#allcont2{
+			background-color: white;
+			z-index: 1;
+			display: none;
+			position: fixed;
+			width: 100%;
+			height: 100%;
+			flex-direction: column;
+		}
+		#goback{
+			width: 100px;
+			border-right: 2px solid rgb(0, 32, 96);
+		}
+		.concertinfoinputcont{
+			margin: 10px;
+		}
+		.concertinfoinput{
+			padding: 10px;
+			border-radius: 5px;
+			border: 2px solid rgb(0, 32, 96);
+		}
+		.sections{
+			margin: 10px;
+			width: fit-content;
+			display: flex;
+			flex-direction: column;
+		}
+		#concertsectioncont{
+			margin: 10px;
+		}
+	</style>
+</head>
+<body>
+	<div id="allcont">
+		<div id="tabscont">
+		</div>
+		<div style="height: 100%; overflow-y: overlay;" id="contentcont">
+		</div>
+	</div>
+	<div id="allcont2">
+		<div id="tabscont2"></div>
+		<div style="height: 100%; overflow-y: overlay;" id="contentcont2">
+		</div>
+	</div>
+		
+	<script>
+		function $(id){
+			return document.getElementById(id);
+		}
+
+		function generateID(){
+			return '_' + Math.random().toString(36).substr(2, 9);
+		}
+
+		// function getUserRight(){
+		// 	return ("SC/CCA");
+		// }
+
+		// function getStudentEmail(){
+		// 	return "zenon.hans.taneka@dhs.sg";
+		// }
+
+		// function getAllAdmins(){
+		// 	return ["chen.yiyang@dhs.sg","zenon.hans.taneka@dhs.sg"];
+		// }
+
+		// function getappdata(){
+		// 	var alldata = {
+		// 		ccaleaders:{
+		// 			"chen?yiyang@dhs?sg":"ICC",
+		// 			"zenon?hans?taneka@dhs?sg":"SC"
+		// 		},
+		// 		concerts:{
+		// 			"_1e06ah3p4":{
+		// 				"concertname":"Name",
+		// 				"concertmembers":['chen?yiyang@dhs?sg',"zenon?hans?taneka@dhs?sg"],
+		// 				"concertattendance":[
+		// 					{
+		// 						"attendantname":"zenon?hans?taneka@dhs?sg",
+		// 						"attendantnumber":1,
+		// 						"attendantpaid":"Unpaid"
+		// 					}
+		// 				],
+		// 				"concertcca":"SC",
+		// 				"sections":[
+		// 					[
+		// 						"Title",
+		// 						"Description"
+		// 					],
+		// 				]
+		// 			}
+		// 		}
+		// 	};
+		// 	return alldata;
+		// }
+
+		var alldata = getappdata();
+		function onDataChanged(newdata){
+			alldata = newdata;
+			checkUserRights();
+			if(nowat=='ccaleaderstab'){
+				parseCCALeaders();
+			} else if (nowat=='concertstab'){
+				gotoConcertsLists();
+			} else if (nowat=='ccamemberstab'){
+				gotoMembersLists(viewingconcertid);
+			} else if (nowat=='attendancetab'){
+				gotoAttendanceLists(viewingconcertid);
+			} else if (nowat=="concertinfotab"){
+				gotoConcertInfo(viewingconcertid);
+			}
+		}
+
+		var nowat = '';
+		var selfcca = "";
+
+		checkUserRights();
+		function checkUserRights(){
+			// if user right is SC, go to the page that allows changing of CCA leaders i.e.
+			if (getUserRight() == "SC IC" || getUserRight() == "SC Member"){
+				createTabsLayout(true, false);
+			} else if (getUserRight() == "CCA IC") {
+				createTabsLayout(false, true);
+				if(alldata.ccaleaders){
+					selfcca = alldata["ccaleaders"][getStudentEmail().replace(new RegExp("\\.","g"),"?")];
+				}
+			} else if (getUserRight() == "SC/CCA" || getUserRight() == "Owner") {
+				// user has both rights give the ultimate power
+				createTabsLayout(true, true);
+				if(alldata.ccaleaders){
+					selfcca = alldata["ccaleaders"][getStudentEmail().replace(new RegExp("\\.","g"),"?")];
+				}
+			} else {
+				createTabsLayout(false, false);
+				//what are you even doing here?
+			}
+			// if user right is CCA, go to the page that allows adding of concerts, viewing of list of concerts
+		}
+
+		function createTabsLayout(sc, cca){
+			$('tabscont').innerHTML = "";
+			if(sc){
+				var ccaleaderstab = document.createElement('div');
+				ccaleaderstab.className = "tabs";
+				ccaleaderstab.innerHTML = "<div class='tabsinner' onclick='parseCCALeaders()'>CCA Leaders</div>"
+				$('tabscont').appendChild(ccaleaderstab);
+			}
+
+			if(cca){
+				var concertstab = document.createElement('div');
+				concertstab.className = "tabs";
+				concertstab.innerHTML = "<div class='tabsinner' onclick='gotoConcertsLists()'>Concerts Lists</div>"
+				$('tabscont').appendChild(concertstab);
+			}
+		}
+
+		function parseCCALeaders(){
+			nowat = 'ccaleaderstab';
+			// list CCA leaders and their CCA on the page
+			$('contentcont').innerHTML = "<div class='leaders'><div style='flex-grow:1;'>Email</div><div>CCA</div></div>";
+			for(var i = 0; i < getAllAdmins().length; i++){
+				var newleader = document.createElement('div');
+				newleader.id = "leader"+i;
+				newleader.className = "leaders";
+				var admincca = "";
+				if(alldata){
+					if(alldata.ccaleaders[getAllAdmins()[i].replace(new RegExp("\\.","g"),"?")]){
+						admincca = alldata.ccaleaders[getAllAdmins()[i].replace(new RegExp("\\.","g"),"?")];
+					}
+				}
+				newleader.innerHTML = "<div style='flex-grow:1;'>"+getAllAdmins()[i]+"</div><input value='"+admincca+"' id='leaderinput"+getAllAdmins()[i].replace(new RegExp("\\.","g"),"?")+"' onchange='saveleadercca(\""+getAllAdmins()[i].replace(new RegExp("\\.","g"),"?")+"\")'>";
+				$('contentcont').appendChild(newleader);
+			}
+		}
+
+		function gotoConcertsLists(){
+			nowat = 'concertstab';
+			$('contentcont').innerHTML = "<div class='concerts'>Concerts</div>";
+			if(alldata && alldata.concerts){
+				for(var i = 0; i < Object.entries(alldata.concerts).length; i++){
+					if(Object.entries(alldata.concerts)[i][1].concertcca == selfcca){
+						var newconcert = document.createElement('div');
+						newconcert.id = "concert"+i;
+						newconcert.className = "concerts";
+						newconcert.innerHTML = "<div onclick='gotoconcert(\""+Object.entries(alldata.concerts)[i][0]+"\")' style='flex-grow:1;'>"+Object.entries(alldata.concerts)[i][1].concertname+"</div>";
+						$('contentcont').appendChild(newconcert);
+					}
+				}
+			}
+			var createconcert = document.createElement('div');
+			createconcert.innerHTML = "<div class='btn' id='createconcert' onclick='createconcert()'>+ New Concert</div>";
+			$('contentcont').appendChild(createconcert);
+		}
+
+		function createconcert(){
+			var newconcert = {
+				"concertname":"New concert",
+				"concertmembers":[getStudentEmail().replace(new RegExp("\\.","g"),"?")],
+				"concertcca":selfcca,
+				"concertdesc":"",
+				"concertdate":"",
+				"concertprice":""
+			}
+			transactdata('/concerts/'+generateID()+'/',newconcert);
+		}
+
+		function gotoconcert(id){
+			viewingconcertid = id;
+			$('tabscont2').innerHTML = "";
+			$('allcont2').style.display="flex";
+			var goback = document.createElement('div');
+			goback.id = "goback";
+			goback.innerHTML = "<div onclick='goback()' style='padding:20px;'>X</div>";
+			$('tabscont2').appendChild(goback);
+			var concertinfotab = document.createElement('div');
+			concertinfotab.className = "tabs";
+			concertinfotab.innerHTML = "<div class='tabsinner' onclick='gotoConcertInfo(\""+id+"\")'>Concert Info</div>"
+			$('tabscont2').appendChild(concertinfotab);
+			var ccamemberstab = document.createElement('div');
+			ccamemberstab.className = "tabs";
+			ccamemberstab.innerHTML = "<div class='tabsinner' onclick='gotoMembersLists(\""+id+"\")'>Members</div>"
+			$('tabscont2').appendChild(ccamemberstab);
+			var attendancetab = document.createElement('div');
+			attendancetab.className = "tabs";
+			attendancetab.innerHTML = "<div class='tabsinner' onclick='gotoAttendanceLists(\""+id+"\")'>Attendance</div>"
+			$('tabscont2').appendChild(attendancetab);
+			gotoConcertInfo(id);
+		}
+
+		var viewingconcertid;
+
+		function goback(){
+			$('tabscont2').innerHTML = "";
+			$('allcont2').style.display="none";
+			nowat = 'concertstab';
+		}
+
+		function gotoMembersLists(id){
+			$('contentcont2').innerHTML = "";
+			nowat = 'ccamemberstab';
+			if(alldata["concerts"][id]["concertmembers"]){
+				for(var i = 0; i < alldata["concerts"][id]["concertmembers"].length; i++){
+					var newmember = document.createElement('div');
+					newmember.id = "member"+i;
+					newmember.className = "members";
+					newmember.innerHTML = "<div style='flex-grow:1;'>"+alldata["concerts"][id]["concertmembers"][i].replace(new RegExp("\\?","g"),".")+"</div><div onclick='removemember(\""+i+"\")''>X</div>";
+					$('contentcont2').appendChild(newmember);
+				}
+			}
+			var generatecodebtn = document.createElement('div');
+			generatecodebtn.className = 'btn';
+			generatecodebtn.innerHTML = "<div onclick='gencode(\""+id+"\")'>Generate code for adding members</div>"
+			$('contentcont2').appendChild(generatecodebtn);
+			var secretdiv = document.createElement('div');
+			secretdiv.id = "secret";
+			$('contentcont2').appendChild(secretdiv);
+			if(alldata["concerts"][id]["joincode"]){
+				$('secret').innerHTML="<div style='padding:20px;'>Your code is: "+alldata["concerts"][id]["joincode"]+"</div>";
+			}
+		}
+
+		function gencode(id){
+			var code = generateID();
+			transactdata('/concerts/'+id+'/joincode/',code);
+			$('secret').innerHTML="<div style='padding:20px;'>Your code is: "+code+"</div>";
+		}
+
+		function gotoAttendanceLists(id){
+			nowat = 'attendancetab';
+			$('contentcont2').innerHTML = "<div class='attendants'><div style='width:60%;'>Attendants</div><div style='width:20%;'>Number Attending</div><div style='width:20%;'>Payment Status</div></div>";
+			for(var i = 0; i < Object.entries(alldata["concerts"][id]["concertattendance"]).length; i++){
+				var newattendant = document.createElement('div');
+				newattendant.id = "attendant"+i;
+				newattendant.className = "attendants";
+				newattendant.innerHTML = "<div style='width:60%;'>"+Object.entries(alldata["concerts"][id]["concertattendance"])[i][1].attendantname.replace(new RegExp("\\?","g"),".")+"</div><div style='width:20%;'>"+Object.entries(alldata["concerts"][id]["concertattendance"])[i][1].attendantnumber+"</div><div style='width:20%;'>"+Object.entries(alldata["concerts"][id]["concertattendance"])[i][1].attendantstatus+"</div>Paid: $"+Object.entries(alldata["concerts"][id]["concertattendance"])[i][1].attendantpaid;
+				$('contentcont2').appendChild(newattendant);
+			}
+		}
+
+		function gotoConcertInfo(id){
+			nowat = "concertinfotab";
+			$("contentcont2").innerHTML = "";
+			var concertname = document.createElement('div');
+			concertname.className = 'concertinfoinputcont';
+			concertname.id = 'concertnameinputcont';
+			concertname.innerHTML = "Concert Name<p/><input type='text' value='"+alldata["concerts"][id].concertname+"' id='concertnameinput' class='concertinfoinput'>";
+			var concertdesc = document.createElement('div');
+			concertdesc.className = 'concertinfoinputcont';
+			concertdesc.id = 'concertdescinputcont';
+			concertdesc.innerHTML = "Concert Description<p/><input type='text' value='"+alldata["concerts"][id].concertdesc+"' id='concertdescinput' class='concertinfoinput'>";
+			var concertdate = document.createElement('div');
+			concertdate.className = 'concertinfoinputcont';
+			concertdate.id = 'concertdateinputcont';
+			concertdate.innerHTML = "Concert Date<p/><input type='text' value='"+alldata["concerts"][id].concertdate+"' id='concertdateinput' class='concertinfoinput'>";
+			var concertprice = document.createElement('div');
+			concertprice.className = 'concertinfoinputcont';
+			concertprice.id = 'concertpriceinputcont';
+			concertprice.innerHTML = "Concert Price<p/><input type='text' value='"+alldata["concerts"][id].concertprice+"' id='concertpriceinput' class='concertinfoinput'>";
+			var concertsectioncont = document.createElement('div');
+			concertsectioncont.id = 'concertsectioncont';
+			concertsectioncont.innerHTML = "<div>Sections</div>"
+			$('contentcont2').appendChild(concertname);
+			$('contentcont2').appendChild(concertdesc);
+			$('contentcont2').appendChild(concertdate);
+			$('contentcont2').appendChild(concertprice);
+			$('contentcont2').appendChild(concertsectioncont);
+			if(alldata["concerts"][id].sections){
+				for(var i = 0; i < alldata["concerts"][id].sections.length; i++){
+					var newsection = document.createElement('div');
+					newsection.className = "sections";
+					newsection.id = "section"+i;
+					newsection.innerHTML = "<input id='sectioninput"+i+"' value='"+alldata["concerts"][id].sections[i][0]+"'><textarea id='textarea"+i+"'></textarea>";
+					$('contentcont2').appendChild(newsection);
+					$('textarea'+i).value = alldata["concerts"][id].sections[i][1];
+				}
+			}
+			var createsectionbtn = document.createElement('div');
+			createsectionbtn.className = 'btn';
+			createsectionbtn.innerHTML = "<div onclick='createsection(\""+id+"\")'>+ Create Section</div>";
+			$('contentcont2').appendChild(createsectionbtn);
+			var savebtncont = document.createElement('div');
+			savebtncont.innerHTML = "<div onclick='saveconcertinfo(\""+id+"\")' class='btn'>Save Concert Info</div>";
+			$('contentcont2').appendChild(savebtncont);
+		}
+
+		function saveconcertinfo(id){
+			transactdata('/concerts/'+id+'/concertname/',$('concertnameinput').value);
+			transactdata('/concerts/'+id+'/concertdesc/',$('concertdescinput').value);
+			transactdata('/concerts/'+id+'/concertdate/',$('concertdateinput').value);
+			transactdata('/concerts/'+id+'/concertprice/',$('concertpriceinput').value);
+			if(alldata["concerts"][id].sections){
+				for(var i = 0; i < alldata["concerts"][id].sections.length; i++){
+					transactdata('/concerts/'+id+'/sections/'+i+'/',[$('sectioninput'+i).value,$('textarea'+i).value]);
+				}
+			}
+		}
+
+		function createsection(id){
+			pushdata('/concerts/'+id+'/sections/',["",""]);
+		}
+
+		function removemember(index){
+			var concertmembers = alldata["concerts"][viewingconcertid]["concertmembers"];
+			concertmembers.splice(index,1);
+			transactdata('/concerts/'+viewingconcertid+'/concertmembers/',concertmembers);
+		}
+
+		function saveleadercca(name){
+			transactdata('/ccaleaders/'+name+'/',$('leaderinput'+name).value);
+		}
+
+		// updatepartofdataonly
+		// app id
+		// path to file
+		// changes
+		// return success or failure or deprecated
+		// or should deprecated be dealt with by system?
+	</script>
+</body>
+</html>

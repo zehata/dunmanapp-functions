@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>events</title>
+	<style>
+		*{
+			margin: 0;
+			padding: 0;
+			font-family:  Google Sans Display;
+		}
+		body{
+		}
+		#title{
+			margin-top: 100px;
+			margin-left: 20px;
+			margin-bottom: 20px;
+			padding-top: 20px;
+			font-size: 2.5em;
+			font-weight: bold;
+			color: black;
+		}
+		#allwpr{
+			margin: auto;
+			width: 100vw;
+			max-width: 720px;
+			margin-top: 0;
+			margin-bottom: 0;
+		}
+		.event{
+			height: 300px;
+			width: 100%;
+			background-color: white;
+			position: relative;
+		}
+		.eventwpr{
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+		}
+		.eventttl{
+			position: absolute;
+			font-size: 1.5em;
+			width: calc(100% - 20px);
+		}
+		.eventdesc{
+			font-size: 0.8em;
+			transition: all 0.5s cubic-bezier(.25, .8, .25, 1);
+		}
+		#descbg{
+			position: fixed;
+			top: 100vh;
+			left: 0;
+			width: 100vw;
+			height: 100vh;
+			background-color: white;
+			z-index: 0;
+			transition: all 0.5s cubic-bezier(.25, .8, .25, 1);
+		}
+		.bar{
+			width: 40px;
+			background-color: black;
+			height: 1px;
+			margin-top: 10px;
+			margin-bottom: 10px;
+		}
+	</style>
+</head>
+<body>
+	<div id="allwpr">
+		<div id="title">Events</div>
+		<div id="eventcont"></div>
+	</div>
+	<div id="descbg"></div>
+	<script>
+		// var events=[{"eventname":"Event Name","desc":"Desc","eventid":"abc","sections":[["Description","This is the greatest event ever probably"],["Description","This is the greatest event ever probably"],["Description","This is the greatest event ever probably"]]},{"eventname":"Event Name","desc":"Desc","eventid":"def","sections":[]}];
+		var events;
+		events = getappdata();
+		function onDataChanged(data){
+			events = data;
+			populateevents();
+		}
+		populateevents();
+
+		function populateevents(){
+			$('eventcont').innerHTML = "";
+			for(var i = 0; i < events.length;i++){
+				var event = document.createElement('div');
+				event.className = "event";
+				event.id = "event"+events[i].eventid;
+				event.innerHTML = "<div onclick='gotoevent(\""+events[i].eventid+"\")' class='eventwpr'><div style='padding-bottom:20px; bottom:0; padding-left:20px;' id='eventttl"+events[i].eventid+"' class='eventttl'>"+events[i].eventname+"<div class='bar'></div><div class='eventdesc'>"+events[i].desc+"</div></div></div>"
+				$('eventcont').appendChild(event);
+			}
+		}
+		function $(m){
+			return document.getElementById(m);
+		}
+		var initialy = 0;
+		if(localStorage.getItem('events-return')){
+			if(localStorage.getItem('events-return') == '1'){
+				setTimeout(function(){window.scrollTo(0,Number(localStorage.getItem('events-scrolly'))); },1);
+				localStorage.setItem('events-return','0');
+			}
+		}
+		function gotoevent(id){
+			localStorage.setItem('events-scrolly',window.pageYOffset);
+			var proid = "event"+id;
+			var initialy = $(proid).getBoundingClientRect().y;
+			var initialyttl = $("eventttl"+id).getBoundingClientRect().y;
+			$(proid).style.position = "fixed";
+			$("eventttl"+id).style.bottom = "";
+			$(proid).style.top = initialy+"px";
+			$(proid).style.zIndex = 1;
+			$(proid).style.height = "calc(56.25vw)";
+			$("eventttl"+id).style.position = "fixed";
+			$("eventttl"+id).style.top = initialyttl+"px";
+			$("descbg").style.top = 0;
+			var eventdescs = document.getElementsByClassName('eventdesc');
+			for(var i = 0; i < eventdescs.length;i++){
+				eventdescs[i].style.color="transparent";
+			}
+			setTimeout(function(){
+				localStorage.setItem('events-initialy',initialy);
+				$("eventttl"+id).style.transition = "all 0.5s cubic-bezier(.25, .8, .25, 1)";
+				$("eventttl"+id).style.backgroundColor="rgb(0,32,96)";
+				$("eventttl"+id).style.paddingTop = "20px";
+				$("eventttl"+id).style.paddingLeft = "75px";
+				$(proid).style.transition = "all 0.5s cubic-bezier(.25, .8, .25, 1)";
+				$(proid).style.top = 0;
+				$("eventttl"+id).style.height = "calc(40px)";
+				$("eventttl"+id).style.fontSize = "calc(2em)";
+				$("eventttl"+id).style.color = "white";
+				$("eventttl"+id).style.top = 0;
+			},1);
+			for(var i = 0; i < events.length;i++){
+				if(events[i].eventid == id){
+					localStorage.setItem('events-nowviewing',JSON.stringify(events[i]));
+				}
+			}
+			setTimeout(function(){
+				window.location.href="tix.html";
+			},500);
+		}
+
+	</script>
+</body>
+</html>

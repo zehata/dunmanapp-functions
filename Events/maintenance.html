@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		*{
+			margin: 0;
+			padding: 0;
+			font-family: Google Sans Display;
+		}
+		#eventlist{
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: white;
+		}
+		.events{
+			border-bottom: 1px solid #bbb;
+			padding: 20px;
+			width: calc(100% - 40px);
+		}
+		#currentevent{
+			padding: 20px;
+			width: calc(100% - 40px);
+			display: none;
+		}
+		.sectionscont{
+			display: flex;
+			width:100%;
+			margin-bottom: 10px;
+		}
+		textarea{
+			width: 100%;
+			flex-grow: 1;
+		}
+		.sectiontitles{
+			max-width: 20%;
+			margin-right: 20px;
+		}
+		#addsectionbtn{
+			padding: 10px; background-color: #bbb; border-radius: 5px; width: fit-content;
+		}
+		.btn{
+			margin:20px; padding: 10px; background-color: #bbb; border-radius: 5px; width: fit-content;
+		}
+	</style>
+</head>
+<body>
+	<div id="currentevent">
+		<div id="closeevent" onclick="closeevent();" style="margin-bottom: 10px; padding: 5px; background-color: #bbb; border-radius: 5px; width: fit-content;">X Close</div>
+		<div style="color: white; background-color: red; width: fit-content; border-radius: 5px; padding: 10px;">All data cached automatically</div>
+		<div id="eventname"><div id="eventnametxt">Event Name: </div><input onkeyup="saveeventname();" id="eventnameinput" type="text"></input></div>
+		<div id="eventdesc"><div id="eventdesctxt">Event Description: </div><textarea onkeyup="savedesc();" id="eventdesctextarea" cols="30" rows="5"></textarea></div>
+		<div id="eventsections"><div id="eventsectionstxt">Event Sections: </div><div id="eventsectionscont"></div><div id="addsectionbtn" onclick="addsection();">+ Add Section</div></div>
+	</div>
+	<div id="eventlist">
+		<div><div class="events" id="eventlisting0">Orientation!!</div></div>
+	</div>
+
+	<script>
+		// function getappdata(){
+		// 	var events={0:{"eventname":"Event Name 0","desc":"Desc","eventid":"abc","sections":[["Description","This is the greatest event ever probably"],["Description","This is the greatest event ever probably"],["Description","This is the greatest event ever probably"]]},1:{"eventname":"Event Name","desc":"Desc","eventid":"def","sections":[]}};
+		// 	return events;
+		// }
+
+		var events;
+		events = getappdata();
+		populatelisting();
+
+		function onDataChanged(data){
+			events = data;
+			populatelisting();
+		}
+
+		function populatelisting(){
+			document.getElementById('eventlist').innerHTML = "";
+			if(events){
+				for(var i = 0; i < Object.entries(events).length; i++){
+					var neweventlisting = document.createElement("div");
+					neweventlisting.innerHTML = "<div class='events' onclick='clicklisting("+i+")'>"+events[i].eventname+"</div>";
+					document.getElementById('eventlist').appendChild(neweventlisting);
+				}
+			}
+			var neweventbtn = document.createElement('div');
+			neweventbtn.innerHTML = "<div onclick='newevent();' id='neweventbtn' class='btn'>New Event</div>";
+			document.getElementById('eventlist').appendChild(neweventbtn);
+		}
+
+		var nowviewing;
+		var nowviewingid;
+
+		function closeevent(){
+			nowviewing = "";
+			nowviewingid = "";
+			document.getElementById('eventlist').style.display = "block";
+
+			document.getElementById('currentevent').style.display = "none";
+			document.getElementById('eventnameinput').value = "";
+			document.getElementById('eventdesctextarea').value = "";
+			document.getElementById('eventsectionscont').innerHTML = "";
+
+			populatelisting();
+			savedata(events);
+		}
+
+		function clicklisting(index){
+			nowviewing = events[index];
+			nowviewingid = index;
+
+			document.getElementById('eventlist').style.display = "none";
+
+			document.getElementById('currentevent').style.display = "block";
+
+			document.getElementById('eventnameinput').value = nowviewing.eventname;
+			document.getElementById('eventdesctextarea').value = nowviewing.desc;
+
+			parseSections();
+		}
+
+		function parseSections(){
+			nowviewing = events[nowviewingid];
+			document.getElementById('eventsectionscont').innerHTML = "";
+			if(nowviewing["sections"]){
+				for(var j = 0; j < nowviewing["sections"].length; j++){
+					var newtextareacont = document.createElement('div');
+					newtextareacont.className = "sectionscont";
+					newtextareacont.id = "sectionscont"+j;
+					newtextareacont.innerHTML = "<input onkeyup='save("+j+");' class='sectiontitles' id='sectiontitle"+j+"'></input><textarea onkeyup='save("+j+");' row='10' id='textarea"+j+"'></textarea> <div onclick='closesection("+j+")' style='margin-left:20px;'>X</div>"
+					document.getElementById('eventsectionscont').appendChild(newtextareacont);
+					document.getElementById('sectiontitle'+j).value = nowviewing.sections[j][0];
+					document.getElementById('textarea'+j).value = nowviewing.sections[j][1];
+				}
+			}
+			var deleteevent = document.createElement('div');
+			deleteevent.innerHTML = "<div id='deleteevent' class='btn' onclick='deleteevent();'>Delete Event</div>";
+			document.getElementById('eventsectionscont').appendChild(deleteevent);
+		}
+
+		function closesection(index){
+			events[nowviewingid].sections.splice(index,1);
+			parseSections();
+		}
+
+		function addsection(){
+			pushdata('/'+nowviewingid+'/sections',["",""]);
+			parseSections();
+		}
+
+		function save(j){
+			transactdata('/'+nowviewingid+'/sections/'+j,[document.getElementById('sectiontitle'+j).value,document.getElementById('textarea'+j).value]);
+		}
+
+		function newevent(){
+			eventslength = Object.entries(events).length;
+			events[eventslength] = {"eventname":"","desc":"","sections":[["",""]]};
+		}
+
+		function savedesc(){
+			transactdata('/'+nowviewingid+'/desc',document.getElementById('eventdesctextarea').value);
+		}
+
+		function saveeventname(){
+			transactdata('/'+nowviewingid+'/eventname',document.getElementById('eventnameinput').value);
+		}
+
+		function generateID(){
+			return '_' + Math.random().toString(36).substr(2, 9);
+		}
+
+		function newevent(){
+			pushdata('/',{"eventname":"New Event","desc":"It's a little lonely here","eventid":generateID(),"sections":[]});
+		}
+
+		function deleteevent(){
+			transactdata('/'+nowviewingid,null);
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	<meta charset="UTF-8">
+	<title>Maintenance</title>
+	<style>
+		*{
+			padding: 0;
+			margin:0;
+			font-family: Roboto, Segoe UI, Helvetica, Arial;
+		}
+		#container{
+			display: flex;
+			flex-direction: column;
+		}
+		.textinputs{
+			display: none;
+		}
+		#inputdate, #selecta, #select1, #select2, #select3, #select4, #select5, #select6{
+			background-color: rgb(0, 32, 96);
+			color:white;
+			padding: 8px;
+			margin-top:5px;
+			margin-bottom: 5px;
+			border: none;
+			border-radius: 5px;
+		}
+		#container{
+			padding: 10px;
+		}
+		#save{
+			background-color: rgb(0, 32, 96);
+			color:white;
+			padding: 8px;
+			margin-top:5px;
+			margin-bottom: 5px;
+			border: none;
+			border-radius: 5px;
+			width:fit-content;
+		}
+	</style>
+	</head>
+	<body>
+		<div id="container">
+			Date
+			<input type="date" onchange="loaddate();" id="inputdate">
+			All
+			<select id="selecta">
+				<option value="0">Parade Square</option>
+				<option value="1">Classroom</option>
+				<option value="2">Hall</option>
+				<option value="3">Custom</option>
+			</select>
+			<input type="text" id="inputa" class="textinputs">
+			Year 1
+			<select id="select1" onchange="select();">
+				<option value="0">Parade Square</option>
+				<option value="1">Classroom</option>
+				<option value="2">Hall</option>
+				<option value="3">Custom</option>
+			</select>
+			<input type="text" onkeyup="input(1,event);" id="input1" class="textinputs">
+			Year 2
+			<select id="select2" onchange="select();">
+				<option value="0">Parade Square</option>
+				<option value="1">Classroom</option>
+				<option value="2">Hall</option>
+				<option value="3">Custom</option>
+			</select>
+			<input type="text" onkeyup="input(2,event);" id="input2" class="textinputs">
+			Year 3
+			<select id="select3" onchange="select();">
+				<option value="0">Parade Square</option>
+				<option value="1">Classroom</option>
+				<option value="2">Hall</option>
+				<option value="3">Custom</option>
+			</select>
+			<input type="text" onkeyup="input(3,event);" id="input3" class="textinputs">
+			Year 4
+			<select id="select4" onchange="select();">
+				<option value="0">Parade Square</option>
+				<option value="1">Classroom</option>
+				<option value="2">Hall</option>
+				<option value="3">Custom</option>
+			</select>
+			<input type="text" onkeyup="input(4,event);" id="input4" class="textinputs">
+			Year 5
+			<select id="select5" onchange="select();">
+				<option value="0">Parade Square</option>
+				<option value="1">Classroom</option>
+				<option value="2">Hall</option>
+				<option value="3">Custom</option>
+			</select>
+			<input type="text" onkeyup="input(5,event);" id="input5" class="textinputs">
+			Year 6
+			<select id="select6" onchange="select();">
+				<option value="0">Parade Square</option>
+				<option value="1">Classroom</option>
+				<option value="2">Hall</option>
+				<option value="3">Custom</option>
+			</select>
+			<input type="text" onkeyup="input(6,event);" id="input6" class="textinputs">
+			<div onclick="submit();" id="save">Save</div>
+		</div>
+		<script>
+			// function getappdata(){
+			// 	var json = {"2018-11-23":["0","0",0,0,"2018-11-23",0,0,0],"2018-11-24":[-1,0,0,1,"2018-11-24",1,"Lecture Theatre 2",0]};
+			// 	return json;
+			// };
+
+			var d = new Date();
+			
+		if(d.getDay() == 5){
+			if(d.getHours() >= 10){
+				d.setDate(d.getDate() + 1);
+			}
+		} else {
+			if(d.getHours() >= 9){
+				d.setDate(d.getDate() + 1);
+			}
+		}
+			var datetoday = (d.getFullYear())+"-"+((function(){if((d.getMonth()+1)<10 ){return "0"+(d.getMonth()+1)}else{return d.getMonth()+1}})())+"-"+((function(){if((d.getDate())<10 ){return "0"+(d.getDate())}else{return d.getDate()}})());
+
+			document.getElementById('inputdate').value = datetoday;
+			var date = datetoday;
+
+			var todaysdata = [];
+			var data = getappdata();
+			if(data.hasOwnProperty(date)){
+				todaysdata = data[date];
+			} else if (d.getDay() == 3){
+				todaysdata = [-1,1,1,1,date,1,2,2];
+			} else if (d.getDay() == 5){
+				todaysdata = [-1,2,2,2,date,2,1,1];
+			} else {
+				todaysdata = [0,0,0,0,date,0,0,0];
+			}
+			loadpage();
+			function onDataChanged(newdata){
+				data = newdata;
+				if(data.hasOwnProperty(date)){
+					todaysdata = data[date];
+				} else if (d.getDay() == 3){
+					todaysdata = [-1,1,1,1,datetoday,1,2,2];
+				} else if (d.getDay() == 5){
+					todaysdata = [-1,2,2,2,datetoday,2,1,1];
+				} else {
+					todaysdata = [0,0,0,0,datetoday,0,0,0];
+				}
+				loadpage();
+			}
+
+			var venuemap = ["Parade Square","Classroom","Hall","Custom"];
+
+			function loaddate(){
+				date = document.getElementById('inputdate').value;
+				if(data.hasOwnProperty(date)){
+					todaysdata = data[date];
+				} else if (d.getDay() == 3){
+					todaysdata = [-1,1,1,1,date,1,2,2];
+				} else if (d.getDay() == 5){
+					todaysdata = [-1,2,2,2,date,2,1,1];
+				} else {
+					todaysdata = [0,0,0,0,date,0,0,0];
+				}
+				loadpage();
+			}
+
+			function reloadselecta(){
+				var selection = [];
+				for(var i = 1; i < 7; i++){
+					selection.push(document.getElementById('select'+i).value);
+				}
+				if(selection.every( (val, i, arr) => val === arr[0] ) && selection[0] != 3){
+					todaysdata[0] = Number(selection[0]);
+					document.getElementById('selecta').selectedIndex = selection[0];
+					if(document.getElementById("selecta").length > 4){
+						document.getElementById("selecta").remove(4);
+					}
+				} else if (selection.every( (val, i, arr) => val === arr[0] ) && selection[0] == 3) {
+					var customselections = [];
+					for(var i = 1; i < 7; i++){
+						customselections.push(document.getElementById('input'+i).value);
+					}
+					if(customselections.every( (val, i, arr) => val === arr[0] )){
+						todaysdata[0] = customselections[0];
+						document.getElementById('inputa').value = customselections[0];
+						document.getElementById('selecta').selectedIndex = 3;
+						if(document.getElementById("selecta").length > 4){
+							document.getElementById("selecta").remove(4);
+						}
+					} else {
+						todaysdata[0] = -1;
+					}
+				} else {
+					todaysdata[0] = -1;
+				}
+
+				if(todaysdata[0] != -1){
+					// all are same
+
+				} else {
+					if(document.getElementById("selecta").length < 5){
+						var various = document.createElement('option');
+						various.text = "Various";
+						document.getElementById("selecta").add(various);
+						document.getElementById('selecta').selectedIndex = 4;
+					}
+				}
+				savedates();
+			}
+
+			function loadpage(){
+				if(typeof todaysdata[1] == "number"){
+					document.getElementById("select1").selectedIndex = Number(todaysdata[1]);
+					document.getElementById("input1").style.display = "none";
+				} else {
+					document.getElementById("select1").selectedIndex = 3;
+					document.getElementById("input1").style.display = "block";
+					document.getElementById("input1").value = todaysdata[1];
+				}
+
+				if(typeof todaysdata[2] == "number"){
+					document.getElementById("select2").selectedIndex = Number(todaysdata[2]);
+					document.getElementById("input2").style.display = "none";
+				} else {
+					document.getElementById("select2").selectedIndex = 3;
+					document.getElementById("input2").style.display = "block";
+					document.getElementById("input2").value = todaysdata[2];
+				}
+
+				if(typeof todaysdata[3] == "number"){
+					document.getElementById("select3").selectedIndex = Number(todaysdata[3]);
+					document.getElementById("input3").style.display = "none";
+				} else {
+					document.getElementById("select3").selectedIndex = 3;
+					document.getElementById("input3").style.display = "block";
+					document.getElementById("input3").value = todaysdata[3];
+				}
+
+				if(typeof todaysdata[5] == "number"){
+					document.getElementById("select4").selectedIndex = Number(todaysdata[5]);
+					document.getElementById("input4").style.display = "none";
+				} else {
+					document.getElementById("select4").selectedIndex = 3;
+					document.getElementById("input4").style.display = "block";
+					document.getElementById("input4").value = todaysdata[5];
+				}
+
+				if(typeof todaysdata[6] == "number"){
+					document.getElementById("select5").selectedIndex = Number(todaysdata[6]);
+					document.getElementById("input5").style.display = "none";
+				} else {
+					document.getElementById("select5").selectedIndex = 3;
+					document.getElementById("input5").style.display = "block";
+					document.getElementById("input5").value = todaysdata[6];
+				}
+
+				if(typeof todaysdata[7] == "number"){
+					document.getElementById("select6").selectedIndex = Number(todaysdata[7]);
+					document.getElementById("input6").style.display = "none";
+				} else {
+					document.getElementById("select6").selectedIndex = 3;
+					document.getElementById("input6").style.display = "block";
+					document.getElementById("input6").value = todaysdata[7];
+				}
+				reloadselecta();
+			}
+
+			document.getElementById("selecta").addEventListener("change",function(){
+				var avalue = document.getElementById("selecta").selectedIndex;
+				document.getElementById("select1").selectedIndex = avalue;
+				document.getElementById("select2").selectedIndex = avalue;
+				document.getElementById("select3").selectedIndex = avalue;
+				document.getElementById("select4").selectedIndex = avalue;
+				document.getElementById("select5").selectedIndex = avalue;
+				document.getElementById("select6").selectedIndex = avalue;
+				if(avalue == 3){
+					avalue = document.getElementById("inputa").value;
+					todaysdata[0] = avalue;
+					todaysdata[1] = avalue;
+					todaysdata[2] = avalue;
+					todaysdata[3] = avalue;
+					todaysdata[5] = avalue;
+					todaysdata[6] = avalue;
+					todaysdata[7] = avalue;
+					document.getElementById("inputa").style.display = "block";
+					document.getElementById("input1").style.display = "block";
+					document.getElementById("input2").style.display = "block";
+					document.getElementById("input3").style.display = "block";
+					document.getElementById("input4").style.display = "block";
+					document.getElementById("input5").style.display = "block";
+					document.getElementById("input6").style.display = "block";
+				} else {
+					todaysdata[0] = avalue;
+					todaysdata[1] = avalue;
+					todaysdata[2] = avalue;
+					todaysdata[3] = avalue;
+					todaysdata[5] = avalue;
+					todaysdata[6] = avalue;
+					todaysdata[7] = avalue;
+					document.getElementById("inputa").style.display = "none";
+					document.getElementById("input1").style.display = "none";
+					document.getElementById("input2").style.display = "none";
+					document.getElementById("input3").style.display = "none";
+					document.getElementById("input4").style.display = "none";
+					document.getElementById("input5").style.display = "none";
+					document.getElementById("input6").style.display = "none";
+				}
+				reloadselecta();
+			});
+
+			document.getElementById('inputa').addEventListener("keyup",function(e){
+				var avalue = document.getElementById('inputa').value;
+				document.getElementById('input1').value = avalue;
+				document.getElementById('input2').value = avalue;
+				document.getElementById('input3').value = avalue;
+				document.getElementById('input4').value = avalue;
+				document.getElementById('input5').value = avalue;
+				document.getElementById('input6').value = avalue;
+				todaysdata[0] = avalue;
+				todaysdata[1] = avalue;
+				todaysdata[2] = avalue;
+				todaysdata[3] = avalue;
+				todaysdata[5] = avalue;
+				todaysdata[6] = avalue;
+				todaysdata[7] = avalue;
+				savedates();
+			});
+
+			function select(){
+				if(document.getElementById('select1').selectedIndex == 3){
+					document.getElementById("input1").style.display = "block";
+					todaysdata[1] = document.getElementById('input1').value;
+				} else {
+					document.getElementById("input1").style.display = "none";
+					todaysdata[1] = document.getElementById('select1').selectedIndex;
+				}
+
+				if(document.getElementById('select2').selectedIndex == 3){
+					document.getElementById("input2").style.display = "block";
+					todaysdata[2] = document.getElementById('input2').value;
+				} else {
+					document.getElementById("input2").style.display = "none";
+					todaysdata[2] = document.getElementById('select2').selectedIndex;
+				}
+
+				if(document.getElementById('select3').selectedIndex == 3){
+					document.getElementById("input3").style.display = "block";
+					todaysdata[3] = document.getElementById('input3').value;
+				} else {
+					document.getElementById("input3").style.display = "none";
+					todaysdata[3] = document.getElementById('select3').selectedIndex;
+				}
+
+				if(document.getElementById('select4').selectedIndex == 3){
+					document.getElementById("input4").style.display = "block";
+					todaysdata[5] = document.getElementById('input4').value;
+				} else {
+					document.getElementById("input4").style.display = "none";
+					todaysdata[5] = document.getElementById('select4').selectedIndex;
+				}
+
+				if(document.getElementById('select5').selectedIndex == 3){
+					document.getElementById("input5").style.display = "block";
+					todaysdata[6] = document.getElementById('input5').value;
+				} else {
+					document.getElementById("input5").style.display = "none";
+					todaysdata[6] = document.getElementById('select5').selectedIndex;
+				}
+
+				if(document.getElementById('select6').selectedIndex == 3){
+					document.getElementById("input6").style.display = "block";
+					todaysdata[7] = document.getElementById('input6').value;
+				} else {
+					document.getElementById("input6").style.display = "none";
+					todaysdata[7] = document.getElementById('select6').selectedIndex;
+				}
+				reloadselecta();
+			}
+
+			function input(id,e){
+				switch(id){
+					case 1:
+						todaysdata[1] = document.getElementById('input1').value;
+						break;
+					case 2:
+						todaysdata[2] = document.getElementById('input2').value;
+						break;
+					case 3:
+						todaysdata[3] = document.getElementById('input3').value;
+						break;
+					case 4:
+						todaysdata[5] = document.getElementById('input4').value;
+						break;
+					case 5:
+						todaysdata[6] = document.getElementById('input5').value;
+						break;
+					case 6:
+						todaysdata[7] = document.getElementById('input6').value;
+						break;
+				}
+				reloadselecta();
+			}
+
+			function savedates(){
+				data[date] = todaysdata;
+			}
+
+			function submit(){
+				savedata(data);
+			}
+		</script>
+	</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		*{
+			margin: 0;
+			padding: 0;
+			font-family: Roboto, Segoe UI, Helvetica, Arial;
+		}
+	.sections{
+		display: flex;
+		padding: 5px; 
+	}
+	.sectionheader{
+		padding: 10px;
+	}
+	.sectioncontent{
+		width: 100%;
+	}
+	.paragraphs{
+		display: flex;		
+		margin: 10px;	
+	}
+	textarea{
+		width:100%; 
+	}
+	.close{
+		margin-left: 10px;
+	}
+	.add{
+		margin: 10px;
+	}
+	#save{
+		background-color: rgb(0, 32, 96);
+		color: white;
+		width: fit-content;
+		margin: 5px;
+		padding: 10px;
+		border-radius: 5px;
+	}
+	
+	</style>
+</head>
+<body>
+	<div id="container">
+	</div>
+	<div id="save" onclick="savedata(data);">Save</div>
+
+	<script>
+		var data = [[""]];
+		data = getappdata();
+		function onDataChanged(newdata){
+			data = newdata; 
+			parsedata();
+		}
+		parsedata();
+
+		function addsection(){
+			data.push([""]);
+			parsedata();
+		}
+		function addparagraph(section){
+			data[section].push("");
+			parsedata();
+		}
+		function parsedata(){
+			document.getElementById('container').innerHTML = "";
+			for(var i = 0; i < data.length; i++){
+				var newsection = document.createElement('div');
+				newsection.id = "section"+i;
+				newsection.className = "sections";
+				newsection.innerHTML = `
+					<div class="sectionheader">`+(i+1)+`</div>
+					<div class="sectioncontent" id="sectioncontent`+i+`"></div>
+				`;
+				document.getElementById('container').appendChild(newsection);
+				for(var j = 0; j < data[i].length; j++){
+					var newparagraph = document.createElement('div');
+					newparagraph.id = "section"+i+"paragraph"+j;
+					newparagraph.className = "paragraphs";
+					newparagraph.innerHTML = `
+						<textarea id="textarea`+i+`paragraph`+j+`" cols="30" rows="5" onkeyup="save(`+i+`,`+j+`);"></textarea>
+						<div class="close" onclick="closeparagraph(`+i+`,`+j+`);">✖</div>
+					`;
+					document.getElementById('sectioncontent'+i).appendChild(newparagraph);
+					document.getElementById('textarea'+i+'paragraph'+j).value = data[i][j];
+				}
+				var addbtn = document.createElement('div');
+				addbtn.innerHTML = "<div class='add' onclick='addparagraph("+i+");'>+ Add paragraph</div>";
+				document.getElementById('sectioncontent'+i).appendChild(addbtn);
+			}
+			var addbtn = document.createElement('div');
+			addbtn.innerHTML = "<div class='add' onclick='addsection();'>+ Add section</div>";
+			document.getElementById('container').appendChild(addbtn);
+		}
+		function closeparagraph(i,j){
+			data[i].splice(j,1);
+			if(data[i].length == 0){
+				data.splice(i,1);
+			}
+			parsedata();
+		}
+		function save(i,j){
+			var textvalue = document.getElementById('textarea'+i+'paragraph'+j).value;
+			data[i][j] = textvalue;
+		}
+	</script>
+</body>
+</html>
