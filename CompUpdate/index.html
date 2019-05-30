@@ -30,6 +30,8 @@
 			opacity: 0;
 			border: 2px solid black;
 			border-radius: 10px;
+			display: flex;
+			flex-direction: row;
 		}
 		.bar{
 			width: 40px;
@@ -37,6 +39,14 @@
 			height: 1px;
 			margin-top: 10px;
 			margin-bottom: 10px;
+		}
+		.imgconts{
+			width:10%;
+			max-width: 10%:
+			min-width: 10%;
+		}
+		img{
+			width:100%;
 		}
 	</style>
 </head>
@@ -46,28 +56,45 @@
 	</div>
 	<script>
 		var sections = [];
-		sections = getappdata().all;
+		var alldata = getappdata();
+		sections = alldata.all;
+		var againsts = [];
+		againsts = alldata.against;
+		var images = [];
+		images = alldata.images;
 		function onDataChanged(data){
 			sections = data.all;
+			againsts = data.against;
+			images = data.images;
 			sectionadaptor();
+			justshow();
 		}
 		sectionadaptor();
+		animate();
 
 		function sectionadaptor(){
 			document.getElementById('details').innerHTML = ""; 
 			for(var i = 0; i < sections.length; i++){
 				var newsection = document.createElement('div');
-				newsection.id = "details"+i;
+				newsection.id = "detailscont"+i;
 				newsection.className = "detailsconts";
-				for(var j = 0; j < sections[i].length;j++){
-					newsection.innerHTML += "<div class='desccontent'>"+sections[i][j]+"</div>";
-					if (j != sections[i].length-1){
-						newsection.innerHTML += "<div class='bar'></div>";
+				newsection.innerHTML = "<div style='flex-grow:1;' id='details"+i+"'></div><div class='imgconts'><img id='against"+i+"' src=''/></div>";
+				document.getElementById('details').appendChild(newsection);
+				if(images && againsts){
+					if(images.hasOwnProperty(againsts[i])){
+						document.getElementById('against'+i).src = images[againsts[i]];
 					}
 				}
-				document.getElementById('details').appendChild(newsection);
+				for(var j = 0; j < sections[i].length;j++){
+					var newdesc = document.createElement('div');
+					newdesc.className = "desccontent";
+					newdesc.innerHTML += sections[i][j];
+					if (j != sections[i].length-1){
+						newdesc.innerHTML += "<div class='bar'></div>";
+					}
+					document.getElementById('details'+i).appendChild(newdesc);
+				}
 			}
-			animate();
 		}
 
 		function animate(){
@@ -76,9 +103,15 @@
 				if(fadecounter>=sections.length-1){
 					clearInterval(fadeinterval);
 				}
-				document.getElementById('details'+fadecounter).style.opacity = 1;
+				document.getElementById('detailscont'+fadecounter).style.opacity = 1;
 				fadecounter++;
 			},100)
+		}
+
+		function justshow(){
+			for(var i = 0; i < sections.length; i++){
+				document.getElementById('detailscont'+i).style.opacity = 1;
+			}
 		}
 
 	</script>
