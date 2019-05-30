@@ -43,6 +43,22 @@
 	#promote{
 		margin:10px;
 	}
+	.againstpreviews{
+		height:30px;
+		width: auto;
+		padding: 10px;
+	}
+	.logos{
+		height: 50px;
+		width: calc(100% - 20px);
+		border: 1px solid rgb(0, 32, 96);
+		border-radius: 5px;
+		display: flex;
+	}
+	img{
+		max-width: 100%;
+		max-height: 100%;
+	}
 	</style>
 </head>
 <body>
@@ -52,7 +68,10 @@
 		Recommendation
 		<textarea id="promotetext" onchange="save(-1,-1);" cols="30" rows="5"></textarea>
 	</div>
-	<div id="save" onclick="savedata(alldata);">Save</div>
+	<div id="uploadimages">
+		<input type="file" id="upload">
+	</div>
+	<!-- <div id="save" onclick="savedata(alldata);">Save</div> -->
 
 	<script>
 		var alldata = {
@@ -70,53 +89,139 @@
 		}
 		parsedata();
 
+		document.getElementById('upload').addEventListener('change', handleFileSelect, false);
+
+		function handleFileSelect(evt){
+			var files = evt.target.files;
+
+			for(var j = 0; j < files.length; j++){
+				readfile(files,j,files.length);
+			}
+		}
+
+		var uploadedfiles = [];
+
+		function readfile(files,i,flen){
+		    var f = files[i]
+		    var reader = new FileReader();
+		    if(f.type.slice(0,5) == "image"){
+		        reader.onload = (function(reader) {
+		            return function() {
+		                var content = reader.result;
+		                var filename = encodeURI(f.name)
+		                filename = filename.replace(/\./g, "?");
+		                uploadedfiles.push({
+		                    "filename": filename,
+		                    "contents": content
+		                });
+		                if ((i+1) == flen){
+		                    upload();
+		                }
+		                document.getElementById('uploadimages').innerHTML = `
+		<input type="file" id="upload">`;
+		                document.getElementById('upload').addEventListener('change', handleFileSelect, false);
+
+		            }
+		        })(reader);
+
+		        reader.readAsDataURL(f);
+		    } else if(f.type.slice(0,5) == "text/"){
+		        // not an image
+		    }
+		}
+
+		function upload() {
+	        for (var i = 0; i < uploadedfiles.length; i++) {
+	            transactdata('/images/'+uploadedfiles[i].filename.split('?').slice(0, -1).join('?'),uploadedfiles[i].contents);
+	        }
+		}
+		function showlogos(){
+			var imagespro = Object.entries(alldata["images"])
+			for(var i = 0; i < imagespro.length; i++){
+				var newlogo = document.createElement('div');
+				newlogo.className = "logos";
+				newlogo.id = "logo"+i;
+				newlogo.innerHTML = "<div style='width:10%; padding: 5px;'><img style='' src='"+imagespro[i][1]+"'/></div><div style='flex-grow:1; height:calc(100% - 20px); padding-top: 10px;'>"+imagespro[i][0]+"</div><div style='height: calc(100% - 20px); padding: 10px; width: calc(10% - 20px);' onclick='deleteimage(\""+imagespro[i][0]+"\")'>X</div>";
+				document.getElementById('container').appendChild(newlogo);
+			}
+		}
+		function deleteimage(id){
+			transactdata('/images/'+id+'/',null);
+		}
 		function addsection(){
 			pushdata('/all',[""]);
+			pushdata('/against/',"");
 			parsedata();
 		}
 		function addparagraph(section){
 			pushdata('/all/'+section,"");
 			parsedata();
 		}
+		function changeagainst(id){
+			transactdata('/against/'+id+'/',(document.getElementById('against'+id).value).replace(/\./g, "?"));			
+		}
 		function parsedata(){
 			document.getElementById('container').innerHTML = "";
-			for(var i = 0; i < data.length; i++){
-				var newsection = document.createElement('div');
-				newsection.id = "section"+i;
-				newsection.className = "sections";
-				newsection.innerHTML = `
-					<div class="sectionheader">`+(i+1)+`</div>
-					<div class="sectioncontent" id="sectioncontent`+i+`"></div>
-				`;
-				document.getElementById('container').appendChild(newsection);
-				for(var j = 0; j < data[i].length; j++){
-					var newparagraph = document.createElement('div');
-					newparagraph.id = "section"+i+"paragraph"+j;
-					newparagraph.className = "paragraphs";
-					newparagraph.innerHTML = `
-						<textarea id="textarea`+i+`paragraph`+j+`" cols="30" rows="5" onkeyup="save(`+i+`,`+j+`);"></textarea>
-						<div class="close" onclick="closeparagraph(`+i+`,`+j+`);">✖</div>
+			if(data){
+				for(var i = 0; i < data.length; i++){
+					var newsection = document.createElement('div');
+					newsection.id = "section"+i;
+					newsection.className = "sections";
+					newsection.innerHTML = `
+						<div class="sectionheader">`+(i+1)+`</div>
+						<div class="sectioncontent" id="sectioncontent`+i+`">
+						<input type="text" class="againsts" id="against`+i+`" onchange="changeagainst(`+i+`);"/><img class="againstpreviews" id="againstpreview`+i+`"/></div>
 					`;
-					document.getElementById('sectioncontent'+i).appendChild(newparagraph);
-					document.getElementById('textarea'+i+'paragraph'+j).value = data[i][j];
+					document.getElementById('container').appendChild(newsection);
+					if(alldata['against']){
+						if(alldata['against']){
+						document.getElementById('against'+i).value = (alldata["against"][i]).replace(new RegExp("\\?","g"),".");
+						}
+					}
+					if(alldata['images'] && alldata["against"]){
+						if(alldata['images'].hasOwnProperty(alldata["against"][i])){
+							document.getElementById('againstpreview'+i).src = alldata['images'][alldata['against'][i]];
+						}
+					}
+					for(var j = 0; j < data[i].length; j++){
+						var newparagraph = document.createElement('div');
+						newparagraph.id = "section"+i+"paragraph"+j;
+						newparagraph.className = "paragraphs";
+						newparagraph.innerHTML = `
+							<textarea id="textarea`+i+`paragraph`+j+`" cols="30" rows="5" onchange="save(`+i+`,`+j+`);"></textarea>
+							<div class="close" onclick="closeparagraph(`+i+`,`+j+`);">✖</div>
+						`;
+						document.getElementById('sectioncontent'+i).appendChild(newparagraph);
+						document.getElementById('textarea'+i+'paragraph'+j).value = data[i][j];
+					}
+					var addbtn = document.createElement('div');
+					addbtn.innerHTML = "<div class='add' onclick='addparagraph("+i+");'>+ Add paragraph</div>";
+					document.getElementById('sectioncontent'+i).appendChild(addbtn);
 				}
-				var addbtn = document.createElement('div');
-				addbtn.innerHTML = "<div class='add' onclick='addparagraph("+i+");'>+ Add paragraph</div>";
-				document.getElementById('sectioncontent'+i).appendChild(addbtn);
 			}
 			var addbtn = document.createElement('div');
 			addbtn.innerHTML = "<div class='add' onclick='addsection();'>+ Add section</div>";
 			document.getElementById('container').appendChild(addbtn);
 			document.getElementById('promotetext').value = promote;
+			showlogos();
 		}
 		function closeparagraph(i,j){
-			transactdata('/all/'+i+'/'+j,null);
+			var deletefrom = data[i];
+			if(data[i].length == 1){
+				transactdata('/against/'+i+'/',null);
+			}
+			deletefrom.splice(j,1);
+			alldata["all"][i] = deletefrom;
+			data[i] = deletefrom;
+			transactdata('/all/'+i,data[i]);
 			parsedata();
 		}
 		function save(i,j){
 			if(i != -1){
 				var textvalue = document.getElementById('textarea'+i+'paragraph'+j).value;
 				alldata["all"][i][j] = textvalue;
+				data[i][j] = textvalue;
+				transactdata('/all/'+i+'/'+j+'/',textvalue);
 			}
 			alldata.promote = document.getElementById('promotetext').value;
 		}

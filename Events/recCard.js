@@ -7,11 +7,12 @@ var card = {
     "desc": [],
 }
 
-var events;
-var events = getappdata();
-for(var i = 0; i < events.length; i++){
-	events.push(events[i].eventname);
+var desc = [];
+var data = getappdata();
+for(var i = 0; i < data.length; i++){
+	var section = data[i].eventname + "\r" + data[i].desc;
+	desc.push(section);
 }
-card.desc = events;
+card.desc = desc;
 
 var generatedcard = card;
